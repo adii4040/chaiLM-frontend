@@ -159,6 +159,7 @@ export default function WorkspacePage() {
 
 
 
+  const sessionTitle = sessionDataRes?.data?.title || 'Untitled Workspace';
   const activeCount = selectedSourceUrls.length;
 
   return (
@@ -166,7 +167,13 @@ export default function WorkspacePage() {
       {/* TOP HEADER */}
       <header className="h-14 bg-chailm-panel border-b border-chailm-border px-4 flex items-center justify-between shrink-0 select-none">
         <div className="flex items-center space-x-3">
-          <span className="font-semibold text-chailm-textMain text-lg tracking-tight">chaiLM</span>
+          <button 
+            onClick={() => navigate('/workspace')} 
+            className="font-semibold text-chailm-textMain text-lg tracking-tight hover:text-chailm-accentBlue transition-colors cursor-pointer"
+            title="Back to Workspaces Dashboard"
+          >
+            <span>chaiLM</span>
+          </button>
           <span className="text-[10px] text-chailm-textMuted font-mono bg-chailm-bg border border-chailm-border px-2.5 py-0.5 rounded-full">
             Session: {sessionId}
           </span>
@@ -229,6 +236,7 @@ export default function WorkspacePage() {
 
         {/* 2. Center Panel: NotebookLM Chat Box */}
         <ChatBox
+          sessionTitle={sessionTitle}
           messages={messages}
           isQuerying={isQuerying}
           onSendQuery={handleSendQuery}

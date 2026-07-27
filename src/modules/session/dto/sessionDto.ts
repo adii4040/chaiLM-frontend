@@ -12,6 +12,7 @@ export interface HydratedChatMessage {
 
 export interface HydratedSessionData {
   sessionId: string;
+  title?: string;
   sources: SessionSourceItem[];
   history: HydratedChatMessage[];
 }
@@ -19,4 +20,23 @@ export interface HydratedSessionData {
 export interface SessionDataResponse {
   message: string;
   data: HydratedSessionData;
+}
+
+export interface WorkspaceSummarySource {
+  title: string;
+  sourceType: string;
+}
+
+export interface WorkspaceSummaryItem {
+  sessionId: string;
+  title: string;
+  sourceCount: number;
+  sourcesSummary: WorkspaceSummarySource[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetAllSessionsResponse {
+  message: string;
+  data: WorkspaceSummaryItem[];
 }

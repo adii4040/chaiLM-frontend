@@ -15,6 +15,7 @@ export interface ChatMessage {
 }
 
 interface ChatBoxProps {
+  sessionTitle?: string;
   messages: ChatMessage[];
   isQuerying: boolean;
   onSendQuery: (query: string) => void;
@@ -23,6 +24,7 @@ interface ChatBoxProps {
 }
 
 export default function ChatBox({
+  sessionTitle = 'Untitled Workspace',
   messages,
   isQuerying,
   onSendQuery,
@@ -45,7 +47,7 @@ export default function ChatBox({
         {/* Header Welcome Prompt */}
         <div className="border-b border-chailm-border pb-6 space-y-2">
           <h1 className="text-2xl font-normal text-chailm-textMain tracking-tight">
-            Explore active workspace context
+            {sessionTitle}
           </h1>
           <p className="text-xs text-chailm-textMuted leading-relaxed">
             Query across active YouTube video transcripts and PDF documents with second-level timestamps and page references.
