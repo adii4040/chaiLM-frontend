@@ -167,8 +167,8 @@ export default function WorkspacePage() {
       {/* TOP HEADER */}
       <header className="h-14 bg-chailm-panel border-b border-chailm-border px-4 flex items-center justify-between shrink-0 select-none">
         <div className="flex items-center space-x-3">
-          <button 
-            onClick={() => navigate('/workspace')} 
+          <button
+            onClick={() => navigate('/workspace')}
             className="font-semibold text-chailm-textMain text-lg tracking-tight hover:text-chailm-accentBlue transition-colors cursor-pointer"
             title="Back to Workspaces Dashboard"
           >
@@ -181,22 +181,13 @@ export default function WorkspacePage() {
 
         {/* Right Header Action Bar */}
         <div className="flex items-center space-x-3">
-          <button
-            onClick={handleCreateNewSessionRoute}
-            title="Create New Session"
-            className="flex items-center space-x-1.5 bg-chailm-card hover:bg-chailm-hover px-3 py-1.5 rounded-full text-xs font-medium text-chailm-textMain border border-chailm-border transition-all cursor-pointer"
-          >
-            <RefreshCw className="w-3 h-3 text-chailm-textMuted" />
-            <span>New Session</span>
-          </button>
-
           <div className="flex items-center space-x-2 bg-chailm-card px-3 py-1 rounded-full border border-chailm-border text-xs text-chailm-textMuted">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             <span>Grounding Scope:</span>
             <span className="text-chailm-textMain font-medium">{activeCount} of {sources.length} sources active</span>
           </div>
 
-          <button 
+          <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center space-x-1.5 bg-chailm-card hover:bg-chailm-hover px-3 py-1.5 rounded-full text-xs font-medium text-chailm-textMain border border-chailm-border transition-all cursor-pointer"
           >
