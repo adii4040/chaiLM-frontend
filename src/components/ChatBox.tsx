@@ -50,7 +50,7 @@ export default function ChatBox({
             {sessionTitle}
           </h1>
           <p className="text-xs text-chailm-textMuted leading-relaxed">
-            Query across active YouTube video transcripts and PDF documents with second-level timestamps and page references.
+            Query across active YouTube videos and PDF documents with second-level timestamps and page references.
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export default function ChatBox({
             </div>
             <h2 className="text-sm font-semibold text-chailm-textMain">ChaiLM Workspace RAG</h2>
             <p className="text-chailm-textMuted text-xs max-w-xs leading-relaxed">
-              Ask any question about your indexed YouTube video transcripts, PDFs, or websites to see grounded responses.
+              Ask any question about your indexed YouTube videos, PDFs, or websites to see grounded responses.
             </p>
           </div>
         ) : (

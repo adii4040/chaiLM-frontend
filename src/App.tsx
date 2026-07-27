@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PublicRoute from './routes/PublicRoutes';
 import PrivateRoute from './routes/PrivateRoutes';
+import LandingPage from './pages/LandingPage';
 import WorkspacePage from './pages/WorkspacePage';
 import WorkspaceDashboardPage from './pages/WorkspaceDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -11,8 +12,8 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-300">
       <Routes>
-        {/* Open Route redirects to a new route session */}
-        <Route path="/" element={<Navigate to="/workspace" replace />} />
+        {/* Landing Page Route */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Workspace Routes */}
         <Route element={<PublicRoute />}>
