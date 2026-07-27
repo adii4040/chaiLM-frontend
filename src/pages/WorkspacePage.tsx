@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import LeftSidebar from '../components/LeftSidebar';
 import ChatBox, { type ChatMessage } from '../components/ChatBox';
 import RightPlayerSidebar, { type ActiveMediaState } from '../components/RightPlayerSidebar';
+import { useGetSessionData } from '../modules/session/query/useGetSessionData';
 import { useGetSessionSources } from '../modules/indexer/query/useGetSessionSources';
 import { useQueryWorkspace } from '../modules/query/mutation/useQueryWorkspace';
 
@@ -28,17 +29,59 @@ export default function WorkspacePage() {
   // Chat Messages State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Fetch indexed sources for this session from backend
+  // Hydrate full session data (sources + chat history) from MongoDB
+  const {
+    data: sessionDataRes,
+    isLoading: isLoadingSessionData,
+    refetch: refetchSessionData,
+  } = useGetSessionData(sessionId);
+
+  // Fallback sources fetcher
   const {
     data: sessionSourcesData,
     isLoading: isLoadingSources,
     refetch: refetchSources,
   } = useGetSessionSources(sessionId);
 
+  // Populate state upon session hydration from MongoDB
+  useEffect(() => {
+    if (sessionDataRes?.data) {
+      const { history } = sessionDataRes.data;
+      if (Array.isArray(history)) {
+        const formattedMessages: ChatMessage[] = history.map((msg) => {
+          const timeStr = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : new Date().toLocaleTimeString();
+          if (msg.role === 'user') {
+            return {
+              id: msg.id,
+              role: 'user',
+              text: msg.query || '',
+              timestamp: timeStr,
+            };
+          } else {
+            return {
+              id: msg.id,
+              role: 'assistant',
+              queryData: {
+                query: '',
+                answer: msg.answer || { summary: '', segments: [] },
+                translations: { rewritten: '', stepBack: '', subQueries: [] },
+                sources: msg.sources || [],
+              },
+              timestamp: timeStr,
+            };
+          }
+        });
+        setMessages(formattedMessages);
+      }
+    }
+  }, [sessionDataRes]);
+
   // RAG Query Mutation
   const { mutate: queryWorkspace, isPending: isQuerying } = useQueryWorkspace();
 
-  const sources = sessionSourcesData?.data?.sources || [];
+  const sources = sessionDataRes?.data?.sources?.length
+    ? sessionDataRes.data.sources
+    : sessionSourcesData?.data?.sources || [];
 
   const handleToggleSourceSelect = (url: string) => {
     setSelectedSourceUrls((prev) =>
@@ -65,6 +108,7 @@ export default function WorkspacePage() {
 
   const handleIndexingSuccess = () => {
     refetchSources();
+    refetchSessionData();
   };
 
   const handleSendQuery = (userQueryText: string) => {
@@ -80,8 +124,6 @@ export default function WorkspacePage() {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    // Rule: If user hasn't checked any particular sources, send ALL source URLs in selectedSourceIds.
-    // If user HAS checked specific sources, send ONLY those selected source URLs.
     const allSourceUrls = sources.map((s) => s.sourceUrl).filter(Boolean);
     const effectiveSelectedSourceIds =
       selectedSourceUrls.length > 0 ? selectedSourceUrls : allSourceUrls;
@@ -101,6 +143,7 @@ export default function WorkspacePage() {
             timestamp: new Date().toLocaleTimeString(),
           };
           setMessages((prev) => [...prev, assistantMsg]);
+          refetchSessionData();
         },
       }
     );
@@ -125,7 +168,7 @@ export default function WorkspacePage() {
         onToggleSourceSelect={handleToggleSourceSelect}
         onSelectAllSources={handleSelectAllSources}
         onClearSourceSelection={handleClearSourceSelection}
-        isLoadingSources={isLoadingSources}
+        isLoadingSources={isLoadingSources || isLoadingSessionData}
         onNewSession={handleCreateNewSessionRoute}
         onIndexingSuccess={handleIndexingSuccess}
         onSelectSourceMedia={(src) =>
