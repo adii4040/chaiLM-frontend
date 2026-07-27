@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FileText, Video, Globe, RefreshCw, Folder, Layers, Clock, Search } from 'lucide-react';
+import { Plus, FileText, Video, Globe, RefreshCw, Folder, Layers, Clock, Search, CheckSquare, Square } from 'lucide-react';
 import type { SessionSourceItem, SourceType } from '../modules/indexer/dto/indexerDto';
 import type { SourceItem } from '../modules/query/dto/queryDto';
 import type { ActiveMediaState } from './RightPlayerSidebar';
@@ -10,6 +10,10 @@ interface LeftSidebarProps {
   sessionId: string;
   sources: SessionSourceItem[];
   retrievedSources?: SourceItem[];
+  selectedSourceUrls: string[];
+  onToggleSourceSelect: (url: string) => void;
+  onSelectAllSources: () => void;
+  onClearSourceSelection: () => void;
   isLoadingSources: boolean;
   onNewSession: () => void;
   onIndexingSuccess: () => void;
@@ -20,6 +24,10 @@ export default function LeftSidebar({
   sessionId,
   sources,
   retrievedSources = [],
+  selectedSourceUrls,
+  onToggleSourceSelect,
+  onSelectAllSources,
+  onClearSourceSelection,
   isLoadingSources,
   onNewSession,
   onIndexingSuccess,
@@ -68,6 +76,8 @@ export default function LeftSidebar({
       );
     }
   };
+
+  const allSelected = sources.length > 0 && selectedSourceUrls.length === sources.length;
 
   return (
     <aside className="w-80 bg-slate-950 border-r border-slate-800 flex flex-col h-full shrink-0">
@@ -136,9 +146,18 @@ export default function LeftSidebar({
       {/* Tab Content 1: Workspace Sources */}
       {activeTab === 'sources' && (
         <div className="flex-1 overflow-y-auto p-3 space-y-3">
-          <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-            Indexed Session Sources
-          </h2>
+          <div className="flex justify-between items-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+            <span>Indexed Session Sources</span>
+            {sources.length > 0 && (
+              <button
+                type="button"
+                onClick={allSelected ? onClearSourceSelection : onSelectAllSources}
+                className="text-[10px] text-emerald-400 hover:underline capitalize normal-case font-mono font-normal cursor-pointer"
+              >
+                {allSelected ? 'Deselect All' : 'Select All'}
+              </button>
+            )}
+          </div>
 
           {isLoadingSources ? (
             <p className="text-xs text-slate-500 italic">Loading sources...</p>
@@ -146,6 +165,8 @@ export default function LeftSidebar({
             <div className="space-y-2">
               {sources.map((src, idx) => {
                 const type = src.sourceType.toLowerCase();
+                const isSelected = selectedSourceUrls.includes(src.sourceUrl);
+
                 return (
                   <div
                     key={idx}
@@ -157,17 +178,39 @@ export default function LeftSidebar({
                         cloudinaryUrl: src.cloudinaryUrl,
                       })
                     }
-                    className="p-3 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-lg cursor-pointer transition space-y-1 group"
+                    className={`p-3 bg-slate-900/80 hover:bg-slate-900 border rounded-lg cursor-pointer transition space-y-1 group flex items-start gap-2.5 ${
+                      isSelected
+                        ? 'border-emerald-500/80 bg-emerald-950/20'
+                        : 'border-slate-800 hover:border-slate-700'
+                    }`}
                   >
-                    <div className="flex items-center gap-2 text-xs font-medium">
-                      {type === 'youtube' && <Video className="w-4 h-4 text-red-400 shrink-0" />}
-                      {type === 'pdf' && <FileText className="w-4 h-4 text-amber-400 shrink-0" />}
-                      {type === 'website' && <Globe className="w-4 h-4 text-blue-400 shrink-0" />}
-                      <span className="text-slate-200 group-hover:text-white truncate font-medium">
-                        {src.title}
-                      </span>
+                    {/* Source Selection Checkbox */}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleSourceSelect(src.sourceUrl);
+                      }}
+                      className="pt-0.5 text-slate-400 hover:text-emerald-400 cursor-pointer shrink-0"
+                      title={isSelected ? 'Deselect for RAG search' : 'Select for RAG search'}
+                    >
+                      {isSelected ? (
+                        <CheckSquare className="w-4 h-4 text-emerald-400" />
+                      ) : (
+                        <Square className="w-4 h-4 text-slate-600 hover:text-slate-400" />
+                      )}
                     </div>
-                    <p className="text-[11px] text-slate-500 truncate font-mono">{src.sourceUrl}</p>
+
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2 text-xs font-medium">
+                        {type === 'youtube' && <Video className="w-4 h-4 text-red-400 shrink-0" />}
+                        {type === 'pdf' && <FileText className="w-4 h-4 text-amber-400 shrink-0" />}
+                        {type === 'website' && <Globe className="w-4 h-4 text-blue-400 shrink-0" />}
+                        <span className="text-slate-200 group-hover:text-white truncate font-medium">
+                          {src.title}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 truncate font-mono">{src.sourceUrl}</p>
+                    </div>
                   </div>
                 );
               })}

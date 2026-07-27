@@ -22,6 +22,9 @@ export default function WorkspacePage() {
   // Active Media Player State (Right Sidebar)
   const [activeMedia, setActiveMedia] = useState<ActiveMediaState | null>(null);
 
+  // Selected Sources for RAG Query payload
+  const [selectedSourceUrls, setSelectedSourceUrls] = useState<string[]>([]);
+
   // Chat Messages State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
@@ -35,10 +38,28 @@ export default function WorkspacePage() {
   // RAG Query Mutation
   const { mutate: queryWorkspace, isPending: isQuerying } = useQueryWorkspace();
 
+  const sources = sessionSourcesData?.data?.sources || [];
+
+  const handleToggleSourceSelect = (url: string) => {
+    setSelectedSourceUrls((prev) =>
+      prev.includes(url) ? prev.filter((item) => item !== url) : [...prev, url]
+    );
+  };
+
+  const handleSelectAllSources = () => {
+    const allUrls = sources.map((s) => s.sourceUrl).filter(Boolean);
+    setSelectedSourceUrls(allUrls);
+  };
+
+  const handleClearSourceSelection = () => {
+    setSelectedSourceUrls([]);
+  };
+
   const handleCreateNewSessionRoute = () => {
     const newSession = generateRandomSessionId();
     setMessages([]);
     setActiveMedia(null);
+    setSelectedSourceUrls([]);
     navigate(`/workspace/${newSession}`);
   };
 
@@ -59,8 +80,18 @@ export default function WorkspacePage() {
 
     setMessages((prev) => [...prev, userMessage]);
 
+    // Rule: If user hasn't checked any particular sources, send ALL source URLs in selectedSourceIds.
+    // If user HAS checked specific sources, send ONLY those selected source URLs.
+    const allSourceUrls = sources.map((s) => s.sourceUrl).filter(Boolean);
+    const effectiveSelectedSourceIds =
+      selectedSourceUrls.length > 0 ? selectedSourceUrls : allSourceUrls;
+
     queryWorkspace(
-      { query: userQueryText, sessionId },
+      {
+        query: userQueryText,
+        sessionId,
+        selectedSourceIds: effectiveSelectedSourceIds,
+      },
       {
         onSuccess: (res) => {
           const assistantMsg: ChatMessage = {
@@ -79,19 +110,21 @@ export default function WorkspacePage() {
     setActiveMedia(media);
   };
 
-  const sources = sessionSourcesData?.data?.sources || [];
-
   // Extract latest retrieved context sources from the most recent query response
   const latestAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant' && m.queryData);
   const retrievedSources = latestAssistantMsg?.queryData?.sources || [];
 
   return (
     <div className="flex h-screen w-screen bg-slate-900 text-slate-100 overflow-hidden font-sans">
-      {/* 1. Left Sidebar: Knowledge Sources & Retrieved Context Chunks */}
+      {/* 1. Left Sidebar: Knowledge Sources & Checkboxes */}
       <LeftSidebar
         sessionId={sessionId}
         sources={sources}
         retrievedSources={retrievedSources}
+        selectedSourceUrls={selectedSourceUrls}
+        onToggleSourceSelect={handleToggleSourceSelect}
+        onSelectAllSources={handleSelectAllSources}
+        onClearSourceSelection={handleClearSourceSelection}
         isLoadingSources={isLoadingSources}
         onNewSession={handleCreateNewSessionRoute}
         onIndexingSuccess={handleIndexingSuccess}
