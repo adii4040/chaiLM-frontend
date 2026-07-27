@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Plus, RefreshCw } from 'lucide-react';
 import LeftSidebar from '../components/LeftSidebar';
 import ChatBox, { type ChatMessage } from '../components/ChatBox';
 import RightPlayerSidebar, { type ActiveMediaState } from '../components/RightPlayerSidebar';
@@ -28,6 +29,9 @@ export default function WorkspacePage() {
 
   // Chat Messages State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  // Add Source Modal State
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Hydrate full session data (sources + chat history) from MongoDB
   const {
@@ -153,53 +157,93 @@ export default function WorkspacePage() {
     setActiveMedia(media);
   };
 
-  // Extract latest retrieved context sources from the most recent query response
-  const latestAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant' && m.queryData);
-  const retrievedSources = latestAssistantMsg?.queryData?.sources || [];
+
+
+  const activeCount = selectedSourceUrls.length;
 
   return (
-    <div className="flex h-screen w-screen bg-slate-900 text-slate-100 overflow-hidden font-sans">
-      {/* 1. Left Sidebar: Knowledge Sources & Checkboxes */}
-      <LeftSidebar
-        sessionId={sessionId}
-        sources={sources}
-        retrievedSources={retrievedSources}
-        selectedSourceUrls={selectedSourceUrls}
-        onToggleSourceSelect={handleToggleSourceSelect}
-        onSelectAllSources={handleSelectAllSources}
-        onClearSourceSelection={handleClearSourceSelection}
-        isLoadingSources={isLoadingSources || isLoadingSessionData}
-        onNewSession={handleCreateNewSessionRoute}
-        onIndexingSuccess={handleIndexingSuccess}
-        onSelectSourceMedia={(src) =>
-          setActiveMedia({
-            sourceType: src.sourceType,
-            sourceUrl: src.sourceUrl,
-            title: src.title,
-            cloudinaryUrl: src.cloudinaryUrl,
-            startSeconds: src.startSeconds || 0,
-            formattedTimestamp: src.formattedTimestamp || '00:00:00',
-            pageNumber: src.pageNumber,
-            videoId: src.videoId,
-          })
-        }
-      />
+    <div className="flex flex-col h-screen w-screen bg-chailm-bg text-chailm-textMain overflow-hidden font-sans">
+      {/* TOP HEADER */}
+      <header className="h-14 bg-chailm-panel border-b border-chailm-border px-4 flex items-center justify-between shrink-0 select-none">
+        <div className="flex items-center space-x-3">
+          <span className="font-semibold text-chailm-textMain text-lg tracking-tight">chaiLM</span>
+          <span className="text-[10px] text-chailm-textMuted font-mono bg-chailm-bg border border-chailm-border px-2.5 py-0.5 rounded-full">
+            Session: {sessionId}
+          </span>
+        </div>
 
-      {/* 2. Center Panel: NotebookLM Chat Box */}
-      <ChatBox
-        messages={messages}
-        isQuerying={isQuerying}
-        onSendQuery={handleSendQuery}
-        onMediaClick={handleMediaClick}
-      />
+        {/* Right Header Action Bar */}
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleCreateNewSessionRoute}
+            title="Create New Session"
+            className="flex items-center space-x-1.5 bg-chailm-card hover:bg-chailm-hover px-3 py-1.5 rounded-full text-xs font-medium text-chailm-textMain border border-chailm-border transition-all cursor-pointer"
+          >
+            <RefreshCw className="w-3 h-3 text-chailm-textMuted" />
+            <span>New Session</span>
+          </button>
 
-      {/* 3. Right Sidebar: In-App YouTube & Document Media Player */}
-      {activeMedia && (
-        <RightPlayerSidebar
-          media={activeMedia}
-          onClose={() => setActiveMedia(null)}
+          <div className="flex items-center space-x-2 bg-chailm-card px-3 py-1 rounded-full border border-chailm-border text-xs text-chailm-textMuted">
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Grounding Scope:</span>
+            <span className="text-chailm-textMain font-medium">{activeCount} of {sources.length} sources active</span>
+          </div>
+
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center space-x-1.5 bg-chailm-card hover:bg-chailm-hover px-3 py-1.5 rounded-full text-xs font-medium text-chailm-textMain border border-chailm-border transition-all cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 text-chailm-accentBlue" />
+            <span>Add Source</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* 1. Left Sidebar: Knowledge Sources & Checkboxes */}
+        <LeftSidebar
+          sessionId={sessionId}
+          sources={sources}
+          selectedSourceUrls={selectedSourceUrls}
+          onToggleSourceSelect={handleToggleSourceSelect}
+          onSelectAllSources={handleSelectAllSources}
+          onClearSourceSelection={handleClearSourceSelection}
+          isLoadingSources={isLoadingSources || isLoadingSessionData}
+          onNewSession={handleCreateNewSessionRoute}
+          onIndexingSuccess={handleIndexingSuccess}
+          showAddModal={showAddModal}
+          setShowAddModal={setShowAddModal}
+          onSelectSourceMedia={(src) =>
+            setActiveMedia({
+              sourceType: src.sourceType,
+              sourceUrl: src.sourceUrl,
+              title: src.title,
+              cloudinaryUrl: src.cloudinaryUrl,
+              startSeconds: src.startSeconds || 0,
+              formattedTimestamp: src.formattedTimestamp || '00:00:00',
+              pageNumber: src.pageNumber,
+              videoId: src.videoId,
+            })
+          }
         />
-      )}
+
+        {/* 2. Center Panel: NotebookLM Chat Box */}
+        <ChatBox
+          messages={messages}
+          isQuerying={isQuerying}
+          onSendQuery={handleSendQuery}
+          onMediaClick={handleMediaClick}
+          onOpenAddSource={() => setShowAddModal(true)}
+        />
+
+        {/* 3. Right Sidebar: In-App YouTube & Document Media Player */}
+        {activeMedia && (
+          <RightPlayerSidebar
+            media={activeMedia}
+            onClose={() => setActiveMedia(null)}
+          />
+        )}
+      </div>
     </div>
   );
 }
