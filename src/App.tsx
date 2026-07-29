@@ -2,28 +2,29 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import PublicRoute from './routes/PublicRoutes';
 import PrivateRoute from './routes/PrivateRoutes';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import WorkspacePage from './pages/WorkspacePage';
 import WorkspaceDashboardPage from './pages/WorkspaceDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 
-
-
 function App() {
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-300">
+    <div className="min-h-screen bg-chailm-bg text-chailm-textMain font-sans">
       <Routes>
         {/* Landing Page Route */}
         <Route path="/" element={<LandingPage />} />
 
-        {/* Workspace Routes */}
+        {/* Public Auth Routes */}
         <Route element={<PublicRoute />}>
-          <Route path="/workspace" element={<WorkspaceDashboardPage />} />
-          <Route path="/workspace/:sessionId" element={<WorkspacePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
         </Route>
 
-        {/* Private Routes */}
+        {/* Private Protected Workspace Routes */}
         <Route element={<PrivateRoute />}>
-          {/* Protected routes */}
+          <Route path="/workspace" element={<WorkspaceDashboardPage />} />
+          <Route path="/workspace/:sessionId" element={<WorkspacePage />} />
         </Route>
 
         {/* Fallback */}

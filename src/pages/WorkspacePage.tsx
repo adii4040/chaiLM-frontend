@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus, LogOut, User as UserIcon } from 'lucide-react';
 import LeftSidebar from '../components/LeftSidebar';
 import ChatBox, { type ChatMessage } from '../components/ChatBox';
 import RightPlayerSidebar, { type ActiveMediaState } from '../components/RightPlayerSidebar';
 import { useGetSessionData } from '../modules/session/query/useGetSessionData';
 import { useGetSessionSources } from '../modules/indexer/query/useGetSessionSources';
 import { useQueryWorkspace } from '../modules/query/mutation/useQueryWorkspace';
+import useCurrentUser from '../modules/auth/query/useCurrentUser';
+import { useLogout } from '../modules/auth/mutation/useLogout';
 
 function generateRandomSessionId(): string {
   const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
@@ -162,8 +164,20 @@ export default function WorkspacePage() {
   const sessionTitle = sessionDataRes?.data?.title || 'Untitled Workspace';
   const activeCount = selectedSourceUrls.length;
 
+  const { data: userData } = useCurrentUser();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const user = userData?.user;
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        navigate('/login');
+      },
+    });
+  };
+
   return (
-    <div className="flex flex-col h-screen w-screen bg-chailm-bg text-chailm-textMain overflow-hidden font-sans">
+    <div className="flex flex-col h-screen bg-chailm-bg text-chailm-textMain font-sans overflow-hidden selection:bg-chailm-accentBlue/20 selection:text-white">
       {/* TOP HEADER */}
       <header className="h-14 bg-chailm-panel border-b border-chailm-border px-4 flex items-center justify-between shrink-0 select-none">
         <div className="flex items-center space-x-3">
@@ -194,6 +208,28 @@ export default function WorkspacePage() {
             <Plus className="w-3.5 h-3.5 text-chailm-accentBlue" />
             <span>Add Source</span>
           </button>
+
+          {user && (
+            <div className="flex items-center space-x-2 border-l border-chailm-border pl-3">
+              <div className="flex items-center space-x-2 bg-chailm-card px-2.5 py-1 rounded-full border border-chailm-border text-xs">
+                <div className="w-5 h-5 rounded-full bg-chailm-accentBlue/20 border border-chailm-accentBlue/40 flex items-center justify-center text-chailm-accentBlue font-semibold text-[10px]">
+                  {user.fullname ? user.fullname.charAt(0).toUpperCase() : <UserIcon className="w-3 h-3" />}
+                </div>
+                <span className="text-chailm-textMain font-medium max-w-[100px] truncate">
+                  {user.fullname}
+                </span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                title="Logout"
+                className="p-1.5 text-chailm-textMuted hover:text-rose-400 hover:bg-rose-500/10 rounded-full border border-chailm-border transition-all cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
