@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
-import { FileText, Video, Globe, Loader2, AlertCircle } from 'lucide-react';
+import {
+  FileText,
+  Video,
+  Globe,
+  Loader2,
+  AlertCircle,
+  Sparkles,
+  BookOpen,
+  Layers,
+  HelpCircle,
+  Network,
+  Mic,
+} from 'lucide-react';
 import type { SourceType } from '../modules/indexer/dto/indexerDto';
 import type { WorkspaceSourceItem } from '../modules/workspace/dto/workspaceDto';
+import type { StudioArtifact, StudioArtifactType } from '../modules/studio/dto/studioDto';
 import type { ActiveMediaState } from './RightPlayerSidebar';
 import { useIndexDocument } from '../modules/indexer/mutation/useIndexDocument';
 
@@ -19,7 +32,18 @@ interface LeftSidebarProps {
   onSelectSourceMedia: (media: ActiveMediaState) => void;
   showAddModal: boolean;
   setShowAddModal: (show: boolean) => void;
+  artifacts?: StudioArtifact[];
+  selectedStudioFeature?: StudioArtifactType;
+  onSelectStudioFeature?: (type: StudioArtifactType) => void;
 }
+
+const FIXED_STUDIO_ITEMS: { type: StudioArtifactType; label: string; icon: any }[] = [
+  { type: 'study_guide', label: 'Study Guide', icon: BookOpen },
+  { type: 'flashcards', label: 'Flashcards', icon: Layers },
+  { type: 'quiz', label: 'Quiz', icon: HelpCircle },
+  { type: 'mindmap', label: 'Mind Map', icon: Network },
+  { type: 'audio_overview', label: 'Audio Overview', icon: Mic },
+];
 
 export default function LeftSidebar({
   workspaceId,
@@ -34,6 +58,9 @@ export default function LeftSidebar({
   onSelectSourceMedia,
   showAddModal,
   setShowAddModal,
+  artifacts = [],
+  selectedStudioFeature = 'study_guide',
+  onSelectStudioFeature,
 }: LeftSidebarProps) {
   const currentWorkspaceId = workspaceId || sessionId || '';
   const [indexType, setIndexType] = useState<SourceType>('pdf');
@@ -75,16 +102,16 @@ export default function LeftSidebar({
 
   return (
     <aside className="w-72 bg-chailm-panel border-r border-chailm-border flex flex-col h-full shrink-0">
-      {/* Header */}
+      {/* 1. Header: Sources */}
       <div className="p-3 border-b border-chailm-border flex items-center justify-between">
-        <span className="text-xs font-semibold text-chailm-textMain">Indexed Workspace Sources</span>
+        <span className="text-xs font-semibold text-chailm-textMain">Knowledge Sources</span>
         <span className="font-mono text-[10px] text-chailm-accentBlue bg-chailm-accentBlue/10 px-2 py-0.5 rounded-full border border-chailm-accentBlue/20">
           {sources.length} Total
         </span>
       </div>
 
-      {/* Sources Content */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      {/* 2. Sources Content */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
         <div className="flex justify-between items-center text-[10px] font-semibold text-chailm-textMuted uppercase tracking-wider">
           <span>Grounding Scope</span>
           {sources.length > 0 && (
@@ -163,7 +190,7 @@ export default function LeftSidebar({
                   {isPending && (
                     <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
                       <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
-                      <span>Vectorizing & extracting outline...</span>
+                      <span>Vectorizing & outline...</span>
                     </div>
                   )}
 
@@ -190,6 +217,64 @@ export default function LeftSidebar({
             </p>
           </div>
         )}
+      </div>
+
+      {/* 3. Bottom Studio Features Section (Vertical, Selects Feature) */}
+      <div className="p-3 border-t border-chailm-border bg-chailm-bg/40 space-y-2 shrink-0">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center space-x-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-chailm-accentBlue" />
+            <span className="text-xs font-semibold text-chailm-textMain">Studio Features</span>
+          </div>
+          <span className="font-mono text-[10px] text-chailm-textMuted">
+            {artifacts.length} Total
+          </span>
+        </div>
+
+        {/* Vertical List of Studio Feature Options */}
+        <div className="space-y-1">
+          {FIXED_STUDIO_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const count = artifacts.filter((a) => a.type === item.type).length;
+            const isSelected = selectedStudioFeature === item.type;
+
+            return (
+              <button
+                key={item.type}
+                type="button"
+                onClick={() => onSelectStudioFeature && onSelectStudioFeature(item.type)}
+                className={`w-full p-2.5 rounded-xl border text-xs transition-all cursor-pointer flex items-center justify-between group text-left ${
+                  isSelected
+                    ? 'bg-chailm-card border-chailm-accentBlue text-chailm-accentBlue shadow-xs font-medium'
+                    : 'bg-transparent border-transparent text-chailm-textMuted hover:text-chailm-textMain hover:bg-chailm-hover/40'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5 min-w-0">
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isSelected
+                        ? 'text-chailm-accentBlue'
+                        : count > 0
+                        ? 'text-chailm-textMain'
+                        : 'text-chailm-textMuted group-hover:text-chailm-textMain'
+                    }`}
+                  />
+                  <span className="text-xs truncate">{item.label}</span>
+                </div>
+
+                {count > 0 ? (
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                    {count}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-chailm-textMuted group-hover:text-chailm-accentBlue shrink-0 opacity-60 group-hover:opacity-100">
+                    +
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Modal for Add Source */}

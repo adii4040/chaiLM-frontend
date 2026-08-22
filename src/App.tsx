@@ -25,6 +25,9 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/workspace" element={<WorkspaceDashboardPage />} />
           <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+          <Route path="/workspace/:workspaceId/studio" element={<WorkspacePage />} />
+          <Route path="/workspace/:workspaceId/studio/:featureType" element={<WorkspacePage />} />
+          <Route path="/workspace/:workspaceId/studio/:featureType/:artifactId" element={<WorkspacePage />} />
           <Route path="/workspace/session/:sessionId" element={<WorkspacePage />} />
         </Route>
 
