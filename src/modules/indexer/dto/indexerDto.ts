@@ -1,27 +1,33 @@
 export type SourceType = 'pdf' | 'youtube' | 'website';
 
 export interface IndexUrlPayload {
-  type: SourceType;
+  type: 'youtube' | 'website';
   url: string;
-  sessionId: string;
+  workspaceId: string;
+  userId?: string;
+  sessionId?: string; // Backwards compatible
 }
 
 export interface IndexPdfPayload {
   file: File;
   type: 'pdf';
-  sessionId: string;
+  workspaceId: string;
+  userId?: string;
+  sessionId?: string; // Backwards compatible
 }
 
 export type IndexerPayload = IndexUrlPayload | IndexPdfPayload;
 
 export interface IndexResultData {
-  success: boolean;
-  chunksIndexed: number;
-  sourceType: SourceType;
-  title: string;
-  sourceUrl: string;
+  workspaceId: string;
+  sourceId: string;
+  type: SourceType;
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | string;
+  studioOutlineStatus: 'NOT_STARTED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | string;
+  title?: string;
+  chunksIndexed?: number;
+  sourceUrl?: string;
   cloudinaryUrl?: string | null;
-  publicId?: string | null;
 }
 
 export interface IndexerResponse {
@@ -29,20 +35,8 @@ export interface IndexerResponse {
   data: IndexResultData;
 }
 
-export interface SessionSourceItem {
-  title: string;
-  sourceType: SourceType | string;
-  sourceUrl: string;
-  cloudinaryUrl?: string | null;
-  indexedAt?: string | null;
-}
-
-export interface SessionSourcesData {
-  sessionId: string;
-  sources: SessionSourceItem[];
-}
-
-export interface SessionSourcesResponse {
-  message: string;
-  data: SessionSourcesData;
-}
+export type {
+  WorkspaceSourceItem as SessionSourceItem,
+  WorkspaceData as SessionSourcesData,
+  WorkspaceDataResponse as SessionSourcesResponse,
+} from '../../workspace/dto/workspaceDto';

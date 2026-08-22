@@ -1,27 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FolderOpen } from 'lucide-react';
-import { useGetAllSessions } from '../modules/session/query/useGetAllSessions';
-import { useDeleteSession } from '../modules/session/mutation/useDeleteSession';
+import { useGetAllWorkspaces } from '../modules/workspace/query/useGetAllWorkspaces';
+import { useCreateWorkspace } from '../modules/workspace/mutation/useCreateWorkspace';
+import { useDeleteWorkspace } from '../modules/workspace/mutation/useDeleteWorkspace';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DashboardHero from '../components/dashboard/DashboardHero';
 import DashboardControls from '../components/dashboard/DashboardControls';
 import WorkspaceCard from '../components/dashboard/WorkspaceCard';
 import CreateWorkspaceModal from '../components/dashboard/CreateWorkspaceModal';
 import DashboardNotification from '../components/dashboard/DashboardNotification';
-import type { WorkspaceSummaryItem } from '../modules/session/dto/sessionDto';
-
-function generateRandomSessionId(): string {
-  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : Math.random().toString(36).substring(2, 11);
-  return `session-${uuid}`;
-}
+import type { WorkspaceSummaryItem } from '../modules/workspace/dto/workspaceDto';
 
 export default function WorkspaceDashboardPage() {
   const navigate = useNavigate();
-  const { data: response, isLoading } = useGetAllSessions();
-  const { mutate: deleteSession } = useDeleteSession();
+  const { data: response, isLoading } = useGetAllWorkspaces();
+  const { mutate: createWorkspace, isPending: isCreating } = useCreateWorkspace();
+  const { mutate: deleteWorkspace } = useDeleteWorkspace();
 
   const sessions: WorkspaceSummaryItem[] = response?.data || [];
 
@@ -35,23 +30,35 @@ export default function WorkspaceDashboardPage() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleOpenWorkspace = (sessionId: string) => {
-    navigate(`/workspace/${sessionId}`);
+  const handleOpenWorkspace = (workspaceId: string) => {
+    navigate(`/workspace/${workspaceId}`);
   };
 
-  const handleCreateSessionSubmit = () => {
-    const newSessionId = generateRandomSessionId();
-    setIsCreateModalOpen(false);
-    showNotification(`Navigating to new workspace...`);
-    navigate(`/workspace/${newSessionId}`);
+  const handleCreateWorkspaceSubmit = (title: string) => {
+    createWorkspace(
+      { title },
+      {
+        onSuccess: (res) => {
+          setIsCreateModalOpen(false);
+          showNotification(`Workspace "${res.data.title}" created successfully!`);
+          navigate(`/workspace/${res.data.workspaceId}`);
+        },
+        onError: (err: any) => {
+          showNotification(err?.message || 'Failed to create workspace');
+        },
+      }
+    );
   };
 
-  const handleDelete = (sessionId: string, title: string, e: React.MouseEvent) => {
+  const handleDelete = (workspaceId: string, title: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm(`Are you sure you want to delete workspace "${title}"?`)) {
-      deleteSession(sessionId, {
+      deleteWorkspace(workspaceId, {
         onSuccess: () => {
           showNotification(`Workspace "${title}" deleted.`);
+        },
+        onError: (err: any) => {
+          showNotification(err?.message || 'Failed to delete workspace');
         },
       });
     }
@@ -98,7 +105,7 @@ export default function WorkspaceDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredSessions.map((session) => (
               <WorkspaceCard
-                key={session.sessionId}
+                key={session.workspaceId || session.sessionId}
                 session={session}
                 onOpenWorkspace={handleOpenWorkspace}
                 onDeleteWorkspace={handleDelete}
@@ -142,7 +149,8 @@ export default function WorkspaceDashboardPage() {
       <CreateWorkspaceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateSessionSubmit}
+        onSubmit={handleCreateWorkspaceSubmit}
+        isSubmitting={isCreating}
       />
 
       {/* Toast Notification Alert */}

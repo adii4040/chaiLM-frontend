@@ -4,30 +4,25 @@ import { Plus, LogOut, User as UserIcon } from 'lucide-react';
 import LeftSidebar from '../components/LeftSidebar';
 import ChatBox, { type ChatMessage } from '../components/ChatBox';
 import RightPlayerSidebar, { type ActiveMediaState } from '../components/RightPlayerSidebar';
-import { useGetSessionData } from '../modules/session/query/useGetSessionData';
-import { useGetSessionSources } from '../modules/indexer/query/useGetSessionSources';
+import { useGetWorkspaceData } from '../modules/workspace/query/useGetWorkspaceData';
 import { useQueryWorkspace } from '../modules/query/mutation/useQueryWorkspace';
 import useCurrentUser from '../modules/auth/query/useCurrentUser';
 import { useLogout } from '../modules/auth/mutation/useLogout';
 
-function generateRandomSessionId(): string {
-  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : Math.random().toString(36).substring(2, 11);
-  return `session-${uuid}`;
-}
-
 export default function WorkspacePage() {
-  const { sessionId: routeSessionId } = useParams<{ sessionId: string }>();
+  const { workspaceId: paramWorkspaceId, sessionId: paramSessionId } = useParams<{
+    workspaceId?: string;
+    sessionId?: string;
+  }>();
   const navigate = useNavigate();
 
-  const sessionId = routeSessionId || 'session_demo_1';
+  const workspaceId = paramWorkspaceId || paramSessionId || '';
 
   // Active Media Player State (Right Sidebar)
   const [activeMedia, setActiveMedia] = useState<ActiveMediaState | null>(null);
 
-  // Selected Sources for RAG Query payload
-  const [selectedSourceUrls, setSelectedSourceUrls] = useState<string[]>([]);
+  // Selected Sources for RAG Query payload (strictly sourceIds)
+  const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
 
   // Chat Messages State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -35,27 +30,23 @@ export default function WorkspacePage() {
   // Add Source Modal State
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Hydrate full session data (sources + chat history) from MongoDB
+  // Hydrate full workspace data (sources + chat history) from MongoDB
   const {
-    data: sessionDataRes,
-    isLoading: isLoadingSessionData,
-    refetch: refetchSessionData,
-  } = useGetSessionData(sessionId);
+    data: workspaceDataRes,
+    isLoading: isLoadingWorkspaceData,
+    refetch: refetchWorkspaceData,
+  } = useGetWorkspaceData(workspaceId);
 
-  // Fallback sources fetcher
-  const {
-    data: sessionSourcesData,
-    isLoading: isLoadingSources,
-    refetch: refetchSources,
-  } = useGetSessionSources(sessionId);
-
-  // Populate state upon session hydration from MongoDB
+  // Populate state upon workspace hydration from MongoDB
   useEffect(() => {
-    if (sessionDataRes?.data) {
-      const { history } = sessionDataRes.data;
+    if (workspaceDataRes?.data) {
+      const { history } = workspaceDataRes.data;
       if (Array.isArray(history)) {
         const formattedMessages: ChatMessage[] = history.map((msg) => {
-          const timeStr = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : new Date().toLocaleTimeString();
+          const timeStr = msg.createdAt
+            ? new Date(msg.createdAt).toLocaleTimeString()
+            : new Date().toLocaleTimeString();
+
           if (msg.role === 'user') {
             return {
               id: msg.id,
@@ -69,7 +60,7 @@ export default function WorkspacePage() {
               role: 'assistant',
               queryData: {
                 query: '',
-                answer: msg.answer || { summary: '', segments: [] },
+                answer: msg.answer || { overallSummary: '', sections: [] },
                 translations: { rewritten: '', stepBack: '', subQueries: [] },
                 sources: msg.sources || [],
               },
@@ -80,41 +71,32 @@ export default function WorkspacePage() {
         setMessages(formattedMessages);
       }
     }
-  }, [sessionDataRes]);
+  }, [workspaceDataRes]);
 
   // RAG Query Mutation
   const { mutate: queryWorkspace, isPending: isQuerying } = useQueryWorkspace();
 
-  const sources = sessionDataRes?.data?.sources?.length
-    ? sessionDataRes.data.sources
-    : sessionSourcesData?.data?.sources || [];
+  const sources = workspaceDataRes?.data?.sources || [];
 
-  const handleToggleSourceSelect = (url: string) => {
-    setSelectedSourceUrls((prev) =>
-      prev.includes(url) ? prev.filter((item) => item !== url) : [...prev, url]
+  const handleToggleSourceSelect = (sourceId: string) => {
+    setSelectedSourceIds((prev) =>
+      prev.includes(sourceId)
+        ? prev.filter((item) => item !== sourceId)
+        : [...prev, sourceId]
     );
   };
 
   const handleSelectAllSources = () => {
-    const allUrls = sources.map((s) => s.sourceUrl).filter(Boolean);
-    setSelectedSourceUrls(allUrls);
+    const allIds = sources.map((s) => s.sourceId).filter(Boolean);
+    setSelectedSourceIds(allIds);
   };
 
   const handleClearSourceSelection = () => {
-    setSelectedSourceUrls([]);
-  };
-
-  const handleCreateNewSessionRoute = () => {
-    const newSession = generateRandomSessionId();
-    setMessages([]);
-    setActiveMedia(null);
-    setSelectedSourceUrls([]);
-    navigate(`/workspace/${newSession}`);
+    setSelectedSourceIds([]);
   };
 
   const handleIndexingSuccess = () => {
-    refetchSources();
-    refetchSessionData();
+    refetchWorkspaceData();
   };
 
   const handleSendQuery = (userQueryText: string) => {
@@ -130,14 +112,15 @@ export default function WorkspacePage() {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    const allSourceUrls = sources.map((s) => s.sourceUrl).filter(Boolean);
+    // Send strictly sourceIds
+    const allSourceIds = sources.map((s) => s.sourceId).filter(Boolean);
     const effectiveSelectedSourceIds =
-      selectedSourceUrls.length > 0 ? selectedSourceUrls : allSourceUrls;
+      selectedSourceIds.length > 0 ? selectedSourceIds : allSourceIds;
 
     queryWorkspace(
       {
         query: userQueryText,
-        sessionId,
+        workspaceId,
         selectedSourceIds: effectiveSelectedSourceIds,
       },
       {
@@ -149,7 +132,7 @@ export default function WorkspacePage() {
             timestamp: new Date().toLocaleTimeString(),
           };
           setMessages((prev) => [...prev, assistantMsg]);
-          refetchSessionData();
+          refetchWorkspaceData();
         },
       }
     );
@@ -159,10 +142,8 @@ export default function WorkspacePage() {
     setActiveMedia(media);
   };
 
-
-
-  const sessionTitle = sessionDataRes?.data?.title || 'Untitled Workspace';
-  const activeCount = selectedSourceUrls.length;
+  const workspaceTitle = workspaceDataRes?.data?.title || 'Untitled Workspace';
+  const activeCount = selectedSourceIds.length > 0 ? selectedSourceIds.length : sources.length;
 
   const { data: userData } = useCurrentUser();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
@@ -189,7 +170,7 @@ export default function WorkspacePage() {
             <span>chaiLM</span>
           </button>
           <span className="text-[10px] text-chailm-textMuted font-mono bg-chailm-bg border border-chailm-border px-2.5 py-0.5 rounded-full">
-            Session: {sessionId}
+            Workspace: {workspaceId ? (workspaceId.length > 18 ? `${workspaceId.substring(0, 16)}...` : workspaceId) : 'Demo'}
           </span>
         </div>
 
@@ -198,7 +179,9 @@ export default function WorkspacePage() {
           <div className="flex items-center space-x-2 bg-chailm-card px-3 py-1 rounded-full border border-chailm-border text-xs text-chailm-textMuted">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             <span>Grounding Scope:</span>
-            <span className="text-chailm-textMain font-medium">{activeCount} of {sources.length} sources active</span>
+            <span className="text-chailm-textMain font-medium">
+              {activeCount} of {sources.length} sources active
+            </span>
           </div>
 
           <button
@@ -234,16 +217,15 @@ export default function WorkspacePage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* 1. Left Sidebar: Knowledge Sources & Checkboxes */}
+        {/* 1. Left Sidebar: Knowledge Sources & Grounding Checkboxes */}
         <LeftSidebar
-          sessionId={sessionId}
+          workspaceId={workspaceId}
           sources={sources}
-          selectedSourceUrls={selectedSourceUrls}
+          selectedSourceIds={selectedSourceIds}
           onToggleSourceSelect={handleToggleSourceSelect}
           onSelectAllSources={handleSelectAllSources}
           onClearSourceSelection={handleClearSourceSelection}
-          isLoadingSources={isLoadingSources || isLoadingSessionData}
-          onNewSession={handleCreateNewSessionRoute}
+          isLoadingSources={isLoadingWorkspaceData}
           onIndexingSuccess={handleIndexingSuccess}
           showAddModal={showAddModal}
           setShowAddModal={setShowAddModal}
@@ -263,7 +245,7 @@ export default function WorkspacePage() {
 
         {/* 2. Center Panel: NotebookLM Chat Box */}
         <ChatBox
-          sessionTitle={sessionTitle}
+          sessionTitle={workspaceTitle}
           messages={messages}
           isQuerying={isQuerying}
           onSendQuery={handleSendQuery}
@@ -271,7 +253,7 @@ export default function WorkspacePage() {
           onOpenAddSource={() => setShowAddModal(true)}
         />
 
-        {/* 3. Right Sidebar: In-App YouTube & Document Media Player */}
+        {/* 3. Right Sidebar: In-App YouTube, PDF & Document Media Player */}
         {activeMedia && (
           <RightPlayerSidebar
             media={activeMedia}

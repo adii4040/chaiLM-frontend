@@ -1,11 +1,11 @@
 import React from 'react';
 import { Trash2, Video, Globe, FileText, Clock, ArrowRight } from 'lucide-react';
-import type { WorkspaceSummaryItem } from '../../modules/session/dto/sessionDto';
+import type { WorkspaceSummaryItem } from '../../modules/workspace/dto/workspaceDto';
 
 interface WorkspaceCardProps {
   session: WorkspaceSummaryItem;
-  onOpenWorkspace: (sessionId: string) => void;
-  onDeleteWorkspace: (sessionId: string, title: string, e: React.MouseEvent) => void;
+  onOpenWorkspace: (workspaceId: string) => void;
+  onDeleteWorkspace: (workspaceId: string, title: string, e: React.MouseEvent) => void;
 }
 
 function formatRelativeTime(isoString: string): string {
@@ -26,9 +26,11 @@ export default function WorkspaceCard({
   onOpenWorkspace,
   onDeleteWorkspace,
 }: WorkspaceCardProps) {
+  const id = session.workspaceId || session.sessionId || '';
+
   return (
     <div
-      onClick={() => onOpenWorkspace(session.sessionId)}
+      onClick={() => onOpenWorkspace(id)}
       className="bg-chailm-panel border border-chailm-border hover:border-chailm-accentBlue/50 rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all cursor-pointer group hover:shadow-[0_4px_20px_-2px_rgba(168,199,250,0.08)] relative"
     >
       {/* Top Card Header */}
@@ -40,7 +42,7 @@ export default function WorkspaceCard({
 
           {/* Quick Action Options */}
           <button
-            onClick={(e) => onDeleteWorkspace(session.sessionId, session.title, e)}
+            onClick={(e) => onDeleteWorkspace(id, session.title, e)}
             title="Delete Workspace"
             className="text-chailm-textMuted hover:text-rose-400 p-1 hover:bg-chailm-hover rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
           >
@@ -49,7 +51,7 @@ export default function WorkspaceCard({
         </div>
 
         <div className="flex items-center space-x-2 font-mono text-[10px] text-chailm-textMuted">
-          <span>ID: {session.sessionId.length > 22 ? `${session.sessionId.substring(0, 20)}...` : session.sessionId}</span>
+          <span>ID: {id.length > 22 ? `${id.substring(0, 20)}...` : id}</span>
         </div>
       </div>
 
@@ -66,7 +68,7 @@ export default function WorkspaceCard({
           <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1">
             {session.sourcesSummary.map((src, idx) => (
               <div
-                key={idx}
+                key={src.sourceId || idx}
                 className="flex items-center space-x-2 text-xs bg-chailm-card p-2 rounded-xl border border-chailm-border/80"
               >
                 {src.sourceType === 'youtube' ? (

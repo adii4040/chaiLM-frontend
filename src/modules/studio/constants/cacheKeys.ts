@@ -1,0 +1,9 @@
+export const QUERY_KEY_STUDIO_ARTIFACTS = 'studio-artifacts';
+export const QUERY_KEY_STUDIO_ARTIFACT = 'studio-artifact';
+export const MUTATION_ENSURE_OUTLINE = 'ensure-studio-outline';
+export const MUTATION_GENERATE_STUDY_GUIDE = 'generate-study-guide';
+export const MUTATION_GENERATE_FLASHCARDS = 'generate-flashcards';
+export const MUTATION_GENERATE_QUIZ = 'generate-quiz';
+export const MUTATION_GENERATE_MINDMAP = 'generate-mindmap';
+export const MUTATION_GENERATE_AUDIO_OVERVIEW = 'generate-audio-overview';
+export const MUTATION_DELETE_ARTIFACT = 'delete-studio-artifact';

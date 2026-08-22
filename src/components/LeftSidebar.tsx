@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { FileText, Video, Globe } from 'lucide-react';
-import type { SessionSourceItem, SourceType } from '../modules/indexer/dto/indexerDto';
+import { FileText, Video, Globe, Loader2, AlertCircle } from 'lucide-react';
+import type { SourceType } from '../modules/indexer/dto/indexerDto';
+import type { WorkspaceSourceItem } from '../modules/workspace/dto/workspaceDto';
 import type { ActiveMediaState } from './RightPlayerSidebar';
 import { useIndexDocument } from '../modules/indexer/mutation/useIndexDocument';
 
 interface LeftSidebarProps {
-  sessionId: string;
-  sources: SessionSourceItem[];
-  selectedSourceUrls: string[];
-  onToggleSourceSelect: (url: string) => void;
+  workspaceId: string;
+  sessionId?: string;
+  sources: WorkspaceSourceItem[];
+  selectedSourceIds: string[];
+  onToggleSourceSelect: (sourceId: string) => void;
   onSelectAllSources: () => void;
   onClearSourceSelection: () => void;
   isLoadingSources: boolean;
-  onNewSession: () => void;
+  onNewSession?: () => void;
   onIndexingSuccess: () => void;
   onSelectSourceMedia: (media: ActiveMediaState) => void;
   showAddModal: boolean;
@@ -20,9 +22,10 @@ interface LeftSidebarProps {
 }
 
 export default function LeftSidebar({
+  workspaceId,
   sessionId,
   sources,
-  selectedSourceUrls,
+  selectedSourceIds,
   onToggleSourceSelect,
   onSelectAllSources,
   onClearSourceSelection,
@@ -32,6 +35,7 @@ export default function LeftSidebar({
   showAddModal,
   setShowAddModal,
 }: LeftSidebarProps) {
+  const currentWorkspaceId = workspaceId || sessionId || '';
   const [indexType, setIndexType] = useState<SourceType>('pdf');
   const [url, setUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -43,7 +47,7 @@ export default function LeftSidebar({
     if (indexType === 'pdf') {
       if (!file) return alert('Please select a PDF file');
       indexDocument(
-        { type: 'pdf', file, sessionId },
+        { type: 'pdf', file, workspaceId: currentWorkspaceId },
         {
           onSuccess: () => {
             setFile(null);
@@ -55,7 +59,7 @@ export default function LeftSidebar({
     } else {
       if (!url.trim()) return alert('Please enter a valid URL');
       indexDocument(
-        { type: indexType, url: url.trim(), sessionId },
+        { type: indexType, url: url.trim(), workspaceId: currentWorkspaceId },
         {
           onSuccess: () => {
             setUrl('');
@@ -67,13 +71,13 @@ export default function LeftSidebar({
     }
   };
 
-  const allSelected = sources.length > 0 && selectedSourceUrls.length === sources.length;
+  const allSelected = sources.length > 0 && selectedSourceIds.length === sources.length;
 
   return (
     <aside className="w-72 bg-chailm-panel border-r border-chailm-border flex flex-col h-full shrink-0">
       {/* Header */}
       <div className="p-3 border-b border-chailm-border flex items-center justify-between">
-        <span className="text-xs font-semibold text-chailm-textMain">Indexed Session Sources</span>
+        <span className="text-xs font-semibold text-chailm-textMain">Indexed Workspace Sources</span>
         <span className="font-mono text-[10px] text-chailm-accentBlue bg-chailm-accentBlue/10 px-2 py-0.5 rounded-full border border-chailm-accentBlue/20">
           {sources.length} Total
         </span>
@@ -82,7 +86,7 @@ export default function LeftSidebar({
       {/* Sources Content */}
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         <div className="flex justify-between items-center text-[10px] font-semibold text-chailm-textMuted uppercase tracking-wider">
-          <span>Grounding Checkbox</span>
+          <span>Grounding Scope</span>
           {sources.length > 0 && (
             <button
               type="button"
@@ -95,52 +99,84 @@ export default function LeftSidebar({
         </div>
 
         {isLoadingSources ? (
-          <p className="text-xs text-chailm-textMuted italic">Loading sources...</p>
+          <div className="flex items-center justify-center py-6 text-xs text-chailm-textMuted space-x-2">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-chailm-accentBlue" />
+            <span>Loading sources...</span>
+          </div>
         ) : sources.length > 0 ? (
           <div className="space-y-2">
             {sources.map((src, idx) => {
-              const type = src.sourceType.toLowerCase();
-              const isSelected = selectedSourceUrls.includes(src.sourceUrl);
+              const type = (src.sourceType || 'website').toLowerCase();
+              const sourceId = src.sourceId;
+              const isSelected = selectedSourceIds.includes(sourceId);
+              const isPending = src.status === 'PENDING' || src.status === 'PROCESSING';
+              const isFailed = src.status === 'FAILED';
 
               return (
                 <div
-                  key={idx}
+                  key={sourceId || idx}
                   onClick={() =>
                     onSelectSourceMedia({
                       sourceType: src.sourceType,
                       sourceUrl: src.sourceUrl,
                       title: src.title,
                       cloudinaryUrl: src.cloudinaryUrl,
+                      videoId: src.videoId,
+                      startSeconds: src.startSeconds || 0,
+                      formattedTimestamp: src.formattedTimestamp || null,
+                      pageNumber: src.pageNumber || null,
                     })
                   }
                   className={`p-3 rounded-2xl border transition-all cursor-pointer select-none ${
-                    isSelected 
-                      ? 'bg-chailm-card border-chailm-border' 
-                      : 'bg-transparent border-transparent opacity-40 hover:opacity-70'
+                    isSelected
+                      ? 'bg-chailm-card border-chailm-border shadow-sm'
+                      : 'bg-transparent border-transparent opacity-50 hover:opacity-80'
                   }`}
                 >
                   <div className="flex items-start justify-between space-x-2">
                     <div className="flex items-center space-x-2 min-w-0">
                       {type === 'youtube' ? (
                         <Video className="w-4 h-4 text-rose-400 shrink-0" />
-                      ) : (
+                      ) : type === 'pdf' ? (
                         <FileText className="w-4 h-4 text-amber-400 shrink-0" />
+                      ) : (
+                        <Globe className="w-4 h-4 text-blue-400 shrink-0" />
                       )}
-                      <span className="text-xs font-medium text-chailm-textMain truncate">{src.title}</span>
+                      <span className="text-xs font-medium text-chailm-textMain truncate">
+                        {src.title}
+                      </span>
                     </div>
+
                     <input
                       type="checkbox"
                       checked={isSelected}
+                      disabled={isPending}
                       onChange={(e) => {
                         e.stopPropagation();
-                        onToggleSourceSelect(src.sourceUrl);
+                        onToggleSourceSelect(sourceId);
                       }}
                       className="mt-0.5 rounded border-chailm-border bg-chailm-panel text-chailm-accentBlue focus:ring-0 h-4 w-4 cursor-pointer shrink-0"
                     />
                   </div>
+
+                  {/* Status Indicator Bar */}
+                  {isPending && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                      <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
+                      <span>Vectorizing & extracting outline...</span>
+                    </div>
+                  )}
+
+                  {isFailed && (
+                    <div className="mt-1.5 flex items-center gap-1 text-[10px] text-rose-400 font-mono bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                      <AlertCircle className="w-3 h-3 text-rose-400" />
+                      <span className="truncate">{src.errorMessage || 'Indexing Failed'}</span>
+                    </div>
+                  )}
+
                   <div className="mt-2 flex items-center justify-between text-[10px] text-chailm-textMuted font-mono">
-                    <span className="truncate max-w-[150px]">{src.sourceUrl}</span>
-                    <span className="uppercase">{src.sourceType}</span>
+                    <span className="truncate max-w-[130px]">{src.sourceUrl || src.sourceId}</span>
+                    <span className="uppercase font-semibold text-chailm-accentBlue/80">{src.sourceType}</span>
                   </div>
                 </div>
               );
@@ -149,14 +185,16 @@ export default function LeftSidebar({
         ) : (
           <div className="p-4 bg-chailm-card/40 rounded-2xl border border-dashed border-chailm-border text-center space-y-1.5">
             <p className="text-xs text-chailm-textMain font-medium">No sources added yet</p>
-            <p className="text-[10px] text-chailm-textMuted font-sans">Add YouTube or PDF sources using top Add button.</p>
+            <p className="text-[10px] text-chailm-textMuted font-sans">
+              Add YouTube videos, PDF documents, or websites using the Add button.
+            </p>
           </div>
         )}
       </div>
 
       {/* Modal for Add Source */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-chailm-panel border border-chailm-border rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b border-chailm-border pb-3">
               <h3 className="font-semibold text-chailm-textMain text-sm">Ingest Knowledge Source</h3>
@@ -226,7 +264,7 @@ export default function LeftSidebar({
               )}
 
               {indexError && (
-                <p className="text-xs text-red-400 bg-red-950/50 p-2 rounded border border-red-900 font-mono">
+                <p className="text-xs text-rose-400 bg-rose-950/50 p-2 rounded-xl border border-rose-900 font-mono">
                   {indexError.message}
                 </p>
               )}
@@ -235,6 +273,7 @@ export default function LeftSidebar({
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
+                  disabled={isIndexing}
                   className="px-4 py-2 text-chailm-textMuted hover:text-chailm-textMain cursor-pointer"
                 >
                   Cancel
@@ -242,9 +281,16 @@ export default function LeftSidebar({
                 <button
                   type="submit"
                   disabled={isIndexing}
-                  className="px-4 py-2 bg-chailm-card hover:bg-chailm-hover disabled:opacity-50 text-chailm-textMain font-medium rounded-full border border-chailm-border transition cursor-pointer"
+                  className="px-5 py-2 bg-chailm-accentBlue/10 hover:bg-chailm-accentBlue/20 text-chailm-accentBlue font-medium rounded-full border border-chailm-accentBlue/30 transition cursor-pointer flex items-center space-x-1.5 disabled:opacity-50"
                 >
-                  {isIndexing ? 'Indexing...' : 'Index'}
+                  {isIndexing ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Indexing...</span>
+                    </>
+                  ) : (
+                    <span>Index Source</span>
+                  )}
                 </button>
               </div>
             </form>

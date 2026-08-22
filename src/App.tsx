@@ -24,7 +24,8 @@ function App() {
         {/* Private Protected Workspace Routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/workspace" element={<WorkspaceDashboardPage />} />
-          <Route path="/workspace/:sessionId" element={<WorkspacePage />} />
+          <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+          <Route path="/workspace/session/:sessionId" element={<WorkspacePage />} />
         </Route>
 
         {/* Fallback */}

@@ -1,30 +1,45 @@
-export interface Citation {
+export interface AnswerCitation {
+  sourceId: string | null;
+  sourceUrl: string | null;
   sourceType: 'youtube' | 'pdf' | 'website' | 'unknown';
   pageNumber: number | null;
   startSeconds: number | null;
   formattedTimestamp: string | null;
+  timeUrl: string | null;
 }
+
+export type Citation = AnswerCitation;
 
 export interface AnswerSegment {
   content: string;
-  citation: Citation | null;
+  citation: AnswerCitation | null;
 }
 
-export interface StructuredAnswer {
+export interface AnswerSection {
+  sectionTitle: string;
+  sourceId: string | null;
   summary: string;
   segments: AnswerSegment[];
 }
 
+export interface StructuredAnswer {
+  overallSummary?: string;
+  sections?: AnswerSection[];
+  // Backwards compatibility fallbacks
+  summary?: string;
+  segments?: AnswerSegment[];
+}
+
 export interface QueryTranslations {
-  rewritten: string;
-  stepBack: string;
-  subQueries: string[];
+  rewritten?: string;
+  stepBack?: string;
+  subQueries?: string[];
 }
 
 export interface SourceTimestamp {
-  startSeconds: number;
-  formattedTimestamp: string;
-  timeUrl: string;
+  startSeconds?: number;
+  formattedTimestamp?: string;
+  timeUrl?: string;
 }
 
 export interface SourceItem {
@@ -42,14 +57,15 @@ export interface SourceItem {
 
 export interface QueryRequest {
   query: string;
-  sessionId: string;
+  workspaceId: string;
+  sessionId?: string; // Backwards compatible
   selectedSourceIds?: string[];
 }
 
 export interface QueryResultData {
   query: string;
   answer: StructuredAnswer;
-  translations: QueryTranslations;
+  translations?: QueryTranslations;
   hyde?: string;
   sources: SourceItem[];
 }
