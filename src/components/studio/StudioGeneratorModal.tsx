@@ -33,6 +33,7 @@ export default function StudioGeneratorModal({
     defaultSourceId || sources[0]?.sourceId || ''
   );
   const [customTitle, setCustomTitle] = useState('');
+  const [userPrompt, setUserPrompt] = useState('');
   const [cardCount, setCardCount] = useState(15);
   const [questionCount, setQuestionCount] = useState(10);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
@@ -43,6 +44,7 @@ export default function StudioGeneratorModal({
       if (defaultSourceId) setSelectedSourceId(defaultSourceId);
       else if (sources[0]?.sourceId) setSelectedSourceId(sources[0].sourceId);
       setCustomTitle('');
+      setUserPrompt('');
     }
   }, [isOpen, defaultSourceId, sources]);
 
@@ -64,6 +66,7 @@ export default function StudioGeneratorModal({
     const basePayload = {
       workspaceId,
       sourceId: selectedSourceId || undefined,
+      userPrompt: userPrompt.trim() || undefined,
       title: customTitle.trim() || undefined,
     };
 
@@ -126,7 +129,7 @@ export default function StudioGeneratorModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-chailm-panel border border-chailm-border rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative overflow-hidden">
+      <div className="bg-chailm-panel border border-chailm-border rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative overflow-hidden">
         <div className="brand-gradient-bar h-1 w-full absolute top-0 left-0"></div>
 
         {/* Modal Header for Selected Feature */}
@@ -154,10 +157,10 @@ export default function StudioGeneratorModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           {/* Target Source Document */}
           {sources.length > 0 && (
-            <div className="space-y-1.5 text-xs">
+            <div className="space-y-1 text-xs">
               <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
                 Target Knowledge Source
               </label>
@@ -175,51 +178,106 @@ export default function StudioGeneratorModal({
             </div>
           )}
 
-          {/* Feature Specific Options */}
+          {/* Flashcard Specific Options */}
           {artifactType === 'flashcards' && (
             <div className="space-y-1.5 text-xs animate-in fade-in duration-150">
-              <label className="text-[11px] font-mono text-chailm-textMuted">Number of Cards</label>
-              <input
-                type="number"
-                min="5"
-                max="30"
-                value={cardCount}
-                onChange={(e) => setCardCount(Number(e.target.value))}
-                className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain font-mono focus:outline-none focus:border-chailm-accentBlue"
-              />
+              <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
+                Number of Cards
+              </label>
+              <div className="flex items-center gap-1.5">
+                {[5, 10, 15, 20, 30].map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    onClick={() => setCardCount(count)}
+                    className={`flex-1 py-1 rounded-xl border text-xs font-mono font-medium transition cursor-pointer ${
+                      cardCount === count
+                        ? 'bg-chailm-card border-chailm-accentBlue text-chailm-accentBlue font-bold shadow-xs'
+                        : 'bg-chailm-bg border-chailm-border text-chailm-textMuted hover:text-chailm-textMain'
+                    }`}
+                  >
+                    {count}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
+          {/* Quiz Specific Options: Prominent Number of Questions & Difficulty */}
           {artifactType === 'quiz' && (
-            <div className="grid grid-cols-2 gap-3 animate-in fade-in duration-150">
-              <div className="space-y-1.5 text-xs">
-                <label className="text-[11px] font-mono text-chailm-textMuted">Questions Count</label>
-                <input
-                  type="number"
-                  min="3"
-                  max="20"
-                  value={questionCount}
-                  onChange={(e) => setQuestionCount(Number(e.target.value))}
-                  className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain font-mono focus:outline-none focus:border-chailm-accentBlue"
-                />
+            <div className="space-y-2 animate-in fade-in duration-150">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
+                    Number of Questions
+                  </label>
+                  <span className="text-[11px] font-mono font-bold text-chailm-accentBlue">
+                    {questionCount} Questions
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {[3, 5, 10, 15, 20].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setQuestionCount(num)}
+                      className={`flex-1 py-1.5 rounded-xl border text-xs font-mono font-medium transition cursor-pointer ${
+                        questionCount === num
+                          ? 'bg-chailm-card border-chailm-accentBlue text-chailm-accentBlue font-bold shadow-xs'
+                          : 'bg-chailm-bg border-chailm-border text-chailm-textMuted hover:text-chailm-textMain'
+                      }`}
+                    >
+                      {num} Qs
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-1.5 text-xs">
-                <label className="text-[11px] font-mono text-chailm-textMuted">Difficulty</label>
-                <select
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value as any)}
-                  className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain font-sans focus:outline-none focus:border-chailm-accentBlue"
-                >
-                  <option value="easy">Easy (Definitions)</option>
-                  <option value="medium">Medium (Mechanics)</option>
-                  <option value="hard">Hard (Trade-offs)</option>
-                </select>
+
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="space-y-1 text-xs">
+                  <label className="text-[10px] font-mono text-chailm-textMuted">Custom Count (3–25)</label>
+                  <input
+                    type="number"
+                    min="3"
+                    max="25"
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Number(e.target.value))}
+                    className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-1.5 text-xs text-chailm-textMain font-mono focus:outline-none focus:border-chailm-accentBlue"
+                  />
+                </div>
+                <div className="space-y-1 text-xs">
+                  <label className="text-[10px] font-mono text-chailm-textMuted">Difficulty Level</label>
+                  <select
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(e.target.value as any)}
+                    className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-1.5 text-xs text-chailm-textMain font-sans focus:outline-none focus:border-chailm-accentBlue"
+                  >
+                    <option value="easy">Easy (Definitions)</option>
+                    <option value="medium">Medium (Mechanics)</option>
+                    <option value="hard">Hard (Trade-offs)</option>
+                  </select>
+                </div>
               </div>
             </div>
           )}
+
+          {/* User Custom Instructions / Prompt */}
+          <div className="space-y-1 text-xs">
+            <label className="text-[11px] font-mono text-chailm-textMuted">
+              Custom Focus / Prompt (Optional)
+            </label>
+            <textarea
+              rows={2}
+              placeholder="e.g. Focus on character relationships, trade-offs, or specific section questions..."
+              value={userPrompt}
+              onChange={(e) => setUserPrompt(e.target.value)}
+              className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain placeholder-chailm-textMuted focus:outline-none focus:border-chailm-accentBlue font-sans resize-none"
+            />
+          </div>
 
           {/* Optional Title */}
-          <div className="space-y-1.5 text-xs">
+          <div className="space-y-1 text-xs">
             <label className="text-[11px] font-mono text-chailm-textMuted">
               Custom Title (Optional)
             </label>
@@ -239,7 +297,7 @@ export default function StudioGeneratorModal({
           )}
 
           {/* Actions */}
-          <div className="flex justify-end gap-2 pt-3 text-xs border-t border-chailm-border/60">
+          <div className="flex justify-end gap-2 pt-2 text-xs border-t border-chailm-border/60">
             <button
               type="button"
               onClick={onClose}

@@ -142,6 +142,7 @@ export interface EnsureOutlineResponse {
 export interface GenerateArtifactBasePayload {
   workspaceId: string;
   sourceId?: string;
+  userPrompt?: string;
   title?: string;
   options?: Record<string, any>;
 }
