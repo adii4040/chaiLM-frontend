@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Plus, LogOut, User as UserIcon, MessageSquare, Sparkles, Sidebar as SidebarIcon } from 'lucide-react';
+import {
+  Plus,
+  LogOut,
+  User as UserIcon,
+  MessageSquare,
+  Sparkles,
+  Sidebar as SidebarIcon,
+  ChevronDown,
+  FolderKanban,
+} from 'lucide-react';
 import LeftSidebar from '../components/LeftSidebar';
 import ChatBox, { type ChatMessage } from '../components/ChatBox';
 import RightPlayerSidebar, { type ActiveMediaState } from '../components/RightPlayerSidebar';
@@ -38,9 +47,6 @@ export default function WorkspacePage() {
 
   // Active Media Player State (Right Sidebar Source Preview)
   const [activeMedia, setActiveMedia] = useState<ActiveMediaState | null>(null);
-
-  // Right Sidebar Tab: 'preview' (Source Preview) vs 'studio' (Studio Inspector)
-  const [activeRightTab, setActiveRightTab] = useState<'preview' | 'studio'>('preview');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
   // Active Studio Artifact State
@@ -59,6 +65,9 @@ export default function WorkspacePage() {
 
   // Add Source Modal State
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // User Profile Dropdown Menu State
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   // Hydrate full workspace data (sources + chat history) from MongoDB
   const {
@@ -193,7 +202,6 @@ export default function WorkspacePage() {
 
   const handleMediaClick = (media: ActiveMediaState) => {
     setActiveMedia(media);
-    setActiveRightTab('preview');
     setIsRightSidebarOpen(true);
   };
 
@@ -252,19 +260,15 @@ export default function WorkspacePage() {
     <div className="flex flex-col h-screen bg-chailm-bg text-chailm-textMain font-sans overflow-hidden selection:bg-chailm-accentBlue/20 selection:text-white">
       {/* TOP NAVBAR */}
       <header className="h-14 bg-chailm-panel border-b border-chailm-border px-4 flex items-center justify-between shrink-0 select-none z-30">
-        {/* Left: Brand, Workspace ID, and Mode Switcher */}
-        <div className="flex items-center space-x-3">
+        {/* Left: Brand & Mode Switcher */}
+        <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/workspace')}
             className="font-semibold text-chailm-textMain text-lg tracking-tight hover:text-chailm-accentBlue transition-colors cursor-pointer"
-            title="Back to Workspaces Dashboard"
+            title="Workspaces Dashboard"
           >
             <span>chaiLM</span>
           </button>
-
-          <span className="text-[10px] text-chailm-textMuted font-mono bg-chailm-bg border border-chailm-border px-2.5 py-0.5 rounded-full hidden sm:inline">
-            Workspace: {workspaceId ? (workspaceId.length > 18 ? `${workspaceId.substring(0, 16)}...` : workspaceId) : 'Demo'}
-          </span>
 
           {/* Mode Switcher in Navbar */}
           <div className="flex bg-chailm-bg p-1 rounded-2xl border border-chailm-border text-xs font-medium font-sans">
@@ -314,7 +318,7 @@ export default function WorkspacePage() {
             <span>Add Source</span>
           </button>
 
-          {/* Toggle Right Inspector Button */}
+          {/* Toggle Right Preview Sidebar */}
           <button
             onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
             className={`p-1.5 rounded-full border transition cursor-pointer ${
@@ -322,30 +326,82 @@ export default function WorkspacePage() {
                 ? 'bg-chailm-card text-chailm-accentBlue border-chailm-accentBlue/40'
                 : 'text-chailm-textMuted hover:text-chailm-textMain border-chailm-border hover:bg-chailm-hover'
             }`}
-            title="Toggle Right Preview / Studio Inspector"
+            title="Toggle Right Source Preview"
           >
             <SidebarIcon className="w-4 h-4" />
           </button>
 
+          {/* User Profile Dropdown */}
           {user && (
-            <div className="flex items-center space-x-2 border-l border-chailm-border pl-3">
-              <div className="flex items-center space-x-2 bg-chailm-card px-2.5 py-1 rounded-full border border-chailm-border text-xs">
+            <div className="relative border-l border-chailm-border pl-3">
+              <button
+                type="button"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center space-x-2 bg-chailm-card hover:bg-chailm-hover px-2.5 py-1 rounded-full border border-chailm-border text-xs transition cursor-pointer select-none"
+              >
                 <div className="w-5 h-5 rounded-full bg-chailm-accentBlue/20 border border-chailm-accentBlue/40 flex items-center justify-center text-chailm-accentBlue font-semibold text-[10px]">
                   {user.fullname ? user.fullname.charAt(0).toUpperCase() : <UserIcon className="w-3 h-3" />}
                 </div>
                 <span className="text-chailm-textMain font-medium max-w-[100px] truncate hidden md:inline">
                   {user.fullname}
                 </span>
-              </div>
-
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                title="Logout"
-                className="p-1.5 text-chailm-textMuted hover:text-rose-400 hover:bg-rose-500/10 rounded-full border border-chailm-border transition-all cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5" />
+                <ChevronDown
+                  className={`w-3 h-3 text-chailm-textMuted transition-transform duration-200 ${
+                    isUserMenuOpen ? 'rotate-180 text-chailm-accentBlue' : ''
+                  }`}
+                />
               </button>
+
+              {isUserMenuOpen && (
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  />
+
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 mt-2 w-52 bg-chailm-panel border border-chailm-border rounded-2xl shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3.5 py-2 border-b border-chailm-border/60 space-y-0.5">
+                      <p className="text-xs font-semibold text-chailm-textMain truncate">
+                        {user.fullname}
+                      </p>
+                      {user.email && (
+                        <p className="text-[11px] text-chailm-textMuted font-mono truncate">
+                          {user.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="p-1 space-y-0.5 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          navigate('/workspace');
+                        }}
+                        className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-chailm-textMain hover:bg-chailm-card hover:text-chailm-accentBlue transition cursor-pointer text-left font-medium"
+                      >
+                        <FolderKanban className="w-3.5 h-3.5 text-chailm-accentBlue" />
+                        <span>All Workspaces</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          handleLogout();
+                        }}
+                        disabled={isLoggingOut}
+                        className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-rose-400 hover:bg-rose-500/10 transition cursor-pointer text-left font-medium disabled:opacity-50"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -379,7 +435,6 @@ export default function WorkspacePage() {
               pageNumber: src.pageNumber,
               videoId: src.videoId,
             });
-            setActiveRightTab('preview');
             setIsRightSidebarOpen(true);
           }}
         />
@@ -407,13 +462,12 @@ export default function WorkspacePage() {
           />
         )}
 
-        {/* 3. Right Sidebar: Source Preview vs Studio Inspector */}
+        {/* 3. Right Sidebar: Source Preview Accordion */}
         {isRightSidebarOpen && (
           <RightPlayerSidebar
             media={activeMedia}
-            activeArtifact={activeArtifact}
-            activeTab={activeRightTab}
-            onTabChange={setActiveRightTab}
+            sources={sources}
+            selectedSourceIds={selectedSourceIds}
             onClose={() => setIsRightSidebarOpen(false)}
           />
         )}
