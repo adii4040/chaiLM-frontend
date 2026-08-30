@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type ElementType } from "react";
 import { motion } from "framer-motion";
 import {
   Layers,
@@ -27,7 +27,7 @@ import {
 export interface StudioItem {
   id: string;
   type: string;
-  icon: React.ElementType;
+  icon: ElementType;
   title: string;
   sourceType: "pdf" | "video";
   difficulty: string | null;

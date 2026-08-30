@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Minus } from "lucide-react";
 import { colors, serif, mono, EASE } from "./tokens";

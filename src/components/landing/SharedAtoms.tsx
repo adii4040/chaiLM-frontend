@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
+import { useRef, type AnchorHTMLAttributes, type ReactNode, type CSSProperties, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
-import { colors, mono, EASE } from "./tokens";
+import { colors, mono } from "./tokens";
 import { framerSmoothScrollTo } from "./smoothScroll";
 
-interface MagneticButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface MagneticButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href?: string;
   to?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   reducedMotion?: boolean;
 }
 
@@ -23,7 +23,7 @@ export function MagneticButton({
 }: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement>(null);
 
-  function onMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
+  function onMouseMove(e: MouseEvent<HTMLAnchorElement>) {
     if (reducedMotion || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
@@ -35,7 +35,7 @@ export function MagneticButton({
     if (ref.current) ref.current.style.transform = "translate(0,0)";
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (href && href.startsWith("#")) {
       e.preventDefault();
       framerSmoothScrollTo(href, 80);
@@ -72,8 +72,8 @@ export function Pill({
   style,
   className = "",
 }: {
-  children: React.ReactNode;
-  style?: React.CSSProperties;
+  children: ReactNode;
+  style?: CSSProperties;
   className?: string;
 }) {
   return (
@@ -96,7 +96,7 @@ export function ExhibitStamp({
   pulse,
   small,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   pulse?: boolean;
   small?: boolean;
 }) {
@@ -117,7 +117,7 @@ export function ExhibitStamp({
   );
 }
 
-export function SectionEyebrow({ children }: { children: React.ReactNode }) {
+export function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
     <p
       className="text-xs font-semibold tracking-[0.18em] mb-3"

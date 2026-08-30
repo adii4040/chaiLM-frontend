@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef, type ElementType, type ReactNode } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import {
   Sparkles,
@@ -20,14 +20,14 @@ interface PipelineStep {
   n: string;
   label: string;
   badge: string;
-  icon: React.ElementType;
+  icon: ElementType;
   headline: string;
   detail: string;
   techCode: string;
   artifact: {
     tag: string;
     title: string;
-    render: () => React.ReactNode;
+    render: () => ReactNode;
   };
 }
 

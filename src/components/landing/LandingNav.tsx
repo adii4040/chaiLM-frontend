@@ -1,14 +1,13 @@
-import React from "react";
+import { type ReactNode, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { colors, serif, EASE } from "./tokens";
 import { MagneticButton } from "./SharedAtoms";
-
 import { framerSmoothScrollTo } from "./smoothScroll";
 
-function NavLink({ children, href }: { children: React.ReactNode; href: string }) {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+function NavLink({ children, href }: { children: ReactNode; href: string }) {
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (href.startsWith("#")) {
       e.preventDefault();
       framerSmoothScrollTo(href, 80);

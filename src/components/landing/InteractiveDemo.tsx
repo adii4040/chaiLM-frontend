@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type ElementType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
@@ -12,7 +12,7 @@ import { SectionEyebrow, ExhibitStamp } from "./SharedAtoms";
 
 interface PersonaData {
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   query: string;
   summary: string;
   evidence: { text: string; badge: string }[];

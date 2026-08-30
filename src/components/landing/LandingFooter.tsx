@@ -1,4 +1,3 @@
-import React from "react";
 import { colors, serif, mono } from "./tokens";
 
 export function LandingFooter() {
