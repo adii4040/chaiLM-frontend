@@ -6,8 +6,10 @@ import {
   ScrollProgress,
   LandingNav,
   LandingHero,
+  WhatIsChaiLM,
   HowItWorks,
   RetrievalPipeline,
+  StudioSection,
   ComparisonMatrix,
   InteractiveDemo,
   TechStack,
@@ -61,8 +63,10 @@ export default function LandingPage() {
       <div style={{ position: "relative", zIndex: 2 }}>
         <LandingNav reducedMotion={reducedMotion} />
         <LandingHero reducedMotion={reducedMotion} />
+        <WhatIsChaiLM reducedMotion={reducedMotion} />
         <HowItWorks reducedMotion={reducedMotion} />
         <RetrievalPipeline reducedMotion={reducedMotion} />
+        <StudioSection reducedMotion={reducedMotion} />
         <ComparisonMatrix reducedMotion={reducedMotion} />
         <InteractiveDemo reducedMotion={reducedMotion} />
         <TechStack reducedMotion={reducedMotion} />

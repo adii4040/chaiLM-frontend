@@ -3,6 +3,7 @@ export * from "./SharedAtoms";
 export * from "./AmbientBackground";
 export * from "./LandingNav";
 export * from "./LandingHero";
+export * from "./WhatIsChaiLM";
 export * from "./StudioCoverflow";
 export * from "./HowItWorks";
 export * from "./RetrievalPipeline";

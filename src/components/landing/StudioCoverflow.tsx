@@ -335,3 +335,26 @@ export function StudioCoverflow({ reducedMotion }: { reducedMotion: boolean }) {
     </div>
   );
 }
+
+export function StudioSection({ reducedMotion }: { reducedMotion: boolean }) {
+  return (
+    <section id="studio" className="py-28 overflow-hidden relative" style={{ borderTop: `1px solid ${colors.hairline}` }}>
+      <div className="max-w-4xl mx-auto px-6 mb-16 text-center">
+        <p className="text-xs font-semibold tracking-[0.18em] mb-3 uppercase" style={{ ...mono, color: colors.slateFaint }}>
+          STUDIO ARTIFACTS
+        </p>
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight mb-4" style={{ ...serif, color: colors.ink }}>
+          One verified source, five ways to master it.
+        </h2>
+        <p className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed" style={{ color: colors.slate }}>
+          Transform your grounded sources into multi-format learning artifacts — from interactive quizzes and flashcards to structured study guides and two-host audio overviews.
+        </p>
+      </div>
+
+      <div style={{ width: "100vw", marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}>
+        <StudioCoverflow reducedMotion={reducedMotion} />
+      </div>
+    </section>
+  );
+}
+
