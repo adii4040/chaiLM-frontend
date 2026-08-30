@@ -1,117 +1,75 @@
-import { useState } from 'react';
-import LandingHeader from '../components/landing/LandingHeader';
-import LandingHero from '../components/landing/LandingHero';
-import LandingMockup from '../components/landing/LandingMockup';
-import LandingFeatures from '../components/landing/LandingFeatures';
-import LandingSandbox from '../components/landing/LandingSandbox';
-import LandingTechStack from '../components/landing/LandingTechStack';
-import LandingCta from '../components/landing/LandingCta';
-import LandingFooter from '../components/landing/LandingFooter';
-import type { SandboxDemo, InspectorState, SandboxTakeaway } from '../components/landing/types';
-
-const SANDBOX_DEMOS: SandboxDemo[] = [
-  {
-    id: 'demo_1',
-    label: '🎬 AI Systems & Neural Architecture',
-    query: 'What are the core bottlenecks in scaling Transformer context windows?',
-    summary:
-      'The presentation highlights quadratic memory complexity in standard self-attention mechanisms and details memory-efficient KV-cache management.',
-    takeaways: [
-      {
-        text: 'Self-attention matrix computation scales quadratically O(N²) with sequence length, creating severe VRAM bottlenecks during inference.',
-        citation: 'Timestamp [00:14:22]',
-        type: 'youtube',
-        videoId: 'zjkBMFhNj_g',
-        timeSec: 862,
-      },
-      {
-        text: 'FlashAttention memory optimizations tile matrix multiplication to reduce SRAM memory access overhead by up to 3x.',
-        citation: 'Timestamp [00:32:10]',
-        type: 'youtube',
-        videoId: 'zjkBMFhNj_g',
-        timeSec: 1930,
-      },
-    ],
-  },
-  {
-    id: 'demo_2',
-    label: '📄 Blockchain Property Conveyancing',
-    query: 'What are the regulatory and legal challenges of smart contract property transfers?',
-    summary:
-      'The research identifies user identity verification (e-ID), co-ownership rights in rem, and court-ordered ledger alterations as key legal hurdles in EU property frameworks.',
-    takeaways: [
-      {
-        text: 'Smart contracts automate title transfers, but require verified electronic IDs compliant with national land registry statutes.',
-        citation: 'Page [Page 3]',
-        type: 'pdf',
-        page: 3,
-      },
-      {
-        text: 'Restitution of rights in rem necessitates legal mechanisms for authorized ledger updates under judicial supervision.',
-        citation: 'Page [Page 8]',
-        type: 'pdf',
-        page: 8,
-      },
-    ],
-  },
-];
+import React from "react";
+import {
+  usePrefersReducedMotion,
+  colors,
+  sans,
+  AmbientBackground,
+  ScrollProgress,
+  LandingNav,
+  LandingHero,
+  HowItWorks,
+  RetrievalPipeline,
+  ComparisonMatrix,
+  InteractiveDemo,
+  TechStack,
+  FAQ,
+  LandingFooter,
+} from "../components/landing";
 
 export default function LandingPage() {
-  const [activeDemo, setActiveDemo] = useState<SandboxDemo>(SANDBOX_DEMOS[0]);
-  const [activeInspector, setActiveInspector] = useState<InspectorState>({
-    type: 'youtube',
-    videoId: 'zjkBMFhNj_g',
-    timeSec: 862,
-    formattedTime: '00:14:22',
-    title: 'Transformer Architecture & Scalable Attention Mechanics',
-  });
-
-  const handleCitationClick = (takeaway: SandboxTakeaway) => {
-    if (takeaway.type === 'youtube') {
-      setActiveInspector({
-        type: 'youtube',
-        videoId: takeaway.videoId || 'zjkBMFhNj_g',
-        timeSec: takeaway.timeSec || 0,
-        formattedTime: takeaway.citation.replace('Timestamp ', ''),
-        title: 'Transformer Architecture & Scalable Attention Mechanics',
-      });
-    } else {
-      setActiveInspector({
-        type: 'pdf',
-        page: takeaway.page || 1,
-        title: 'Legal challenges and opportunities of blockchain.pdf',
-      });
-    }
-  };
+  const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <div className="min-h-screen flex flex-col bg-chailm-bg text-chailm-textMain font-sans selection:bg-chailm-accentBlue/20 selection:text-white">
-      <LandingHeader />
+    <div
+      style={{
+        ...sans,
+        background: colors.paper,
+        color: colors.ink,
+        minHeight: "100vh",
+        position: "relative",
+        overflowX: "hidden",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        @keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 1;} 50% { transform: scale(1.5); opacity: 0.55;} }
+        .pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+        @keyframes stampIn { 0% { transform: scale(1.35); opacity: 0; } 70% { transform: scale(0.97); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .stamp-in { animation: stampIn 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+        .exhibit-stamp { transition: transform 160ms cubic-bezier(0.16,1,0.3,1); }
+        .exhibit-stamp:hover { transform: scale(1.04); }
+        .exhibit-notch { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.55; flex-shrink: 0; }
+        @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
+        .marquee-track { animation: marquee 28s linear infinite; }
+        .marquee-track:hover { animation-play-state: paused; }
+        @keyframes waveBounce { 0%,100% { transform: scaleY(0.35);} 50% { transform: scaleY(1);} }
+        .waveform-bar { transform-origin: center; animation: waveBounce 1.1s ease-in-out infinite; }
+        .spotlight-card { position: relative; }
+        .spotlight-card::before {
+          content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+          background: radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(30,42,94,0.06), transparent 70%);
+          opacity: 0; transition: opacity 0.3s ease;
+        }
+        .spotlight-card:hover::before { opacity: 1; }
+        ::selection { background: rgba(31,122,92,0.22); }
+      `}</style>
 
-      <main className="flex-1 space-y-24 pb-20">
-        <section className="pt-20 pb-12 px-6 max-w-6xl mx-auto text-center space-y-8">
-          <LandingHero />
-          <LandingMockup
-            activeInspector={activeInspector}
-            onSelectInspector={setActiveInspector}
-          />
-        </section>
+      {/* Ambient background & scroll progress */}
+      <AmbientBackground reducedMotion={reducedMotion} />
+      <ScrollProgress />
 
-        <LandingFeatures />
-
-        <LandingSandbox
-          demos={SANDBOX_DEMOS}
-          activeDemo={activeDemo}
-          onSelectDemo={setActiveDemo}
-          onCitationClick={handleCitationClick}
-        />
-
-        <LandingTechStack />
-
-        <LandingCta />
-      </main>
-
-      <LandingFooter />
+      {/* Page Sections */}
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <LandingNav reducedMotion={reducedMotion} />
+        <LandingHero reducedMotion={reducedMotion} />
+        <HowItWorks reducedMotion={reducedMotion} />
+        <RetrievalPipeline reducedMotion={reducedMotion} />
+        <ComparisonMatrix reducedMotion={reducedMotion} />
+        <InteractiveDemo reducedMotion={reducedMotion} />
+        <TechStack reducedMotion={reducedMotion} />
+        <FAQ reducedMotion={reducedMotion} />
+        <LandingFooter />
+      </div>
     </div>
   );
 }

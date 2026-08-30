@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useLogin } from '../modules/auth/mutation/useLogin';
-import { KeyRound, Mail, Eye, EyeOff, Cpu, ArrowRight } from 'lucide-react';
+import { KeyRound, Mail, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { colors, serif, mono, EASE, spotlightMove } from '../components/landing/tokens';
 
 type LoginFormValues = {
   email: string;
@@ -51,129 +53,197 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-chailm-bg text-chailm-textMain font-sans px-4 py-12 selection:bg-chailm-accentBlue/20 selection:text-white">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-chailm-border bg-chailm-panel p-8 shadow-2xl relative overflow-hidden text-left shadow-[0_0_32px_-4px_rgba(168,199,250,0.12)]">
-        {/* Brand Top Gradient Bar */}
-        <div className="brand-gradient-bar h-1 w-full absolute top-0 left-0"></div>
+    <div
+      className="min-h-screen flex flex-col justify-between px-4 py-8 relative overflow-hidden"
+      style={{ background: colors.paper, color: colors.ink }}
+    >
+      {/* Ambient background glow */}
+      <div
+        className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-3xl opacity-25"
+        style={{
+          background: 'radial-gradient(circle, #1F7A5C 0%, #1E2A5E 50%, transparent 70%)',
+        }}
+      />
 
-        {/* Logo and Header Title */}
-        <div className="flex flex-col items-center mb-4 text-center">
-          <Link
-            to="/"
-            className="w-12 h-12 rounded-2xl bg-chailm-card border border-chailm-border flex items-center justify-center mb-3 text-chailm-accentBlue hover:border-chailm-accentBlue/40 transition-all"
-          >
-            <Cpu className="w-6 h-6 animate-pulse" />
-          </Link>
-          <h1 className="text-xl font-normal text-chailm-textMain tracking-tight">
-            Authenticate Session
-          </h1>
-          <p className="text-xs text-chailm-textMuted mt-1">
-            Sign in to access your grounded workspace sessions
-          </p>
-        </div>
-
-        {/* Login Form */}
-        <form
-          onSubmit={formik.handleSubmit}
-          noValidate
-          className="flex flex-col gap-4 relative z-10 text-xs"
+      {/* Top Navigation */}
+      <div className="max-w-5xl mx-auto w-full flex items-center justify-between z-10 px-2">
+        <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight" style={serif}>
+          chai<span style={{ color: colors.verified }}>LM</span>
+        </Link>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5C6169] hover:text-[#14171A] transition-colors"
+          style={mono}
         >
-          {/* Email Field */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-mono text-[10px] text-chailm-textMuted uppercase tracking-wider">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-chailm-textMuted" />
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="you@chailm.com"
-                className={`w-full rounded-xl border bg-chailm-bg pl-10 pr-4 py-2.5 text-chailm-textMain placeholder:text-chailm-textMuted outline-none transition-all
-                  ${
-                    formik.touched.email && formik.errors.email
-                      ? 'border-rose-500/60 focus:border-rose-500'
-                      : 'border-chailm-border focus:border-chailm-accentBlue'
-                  }`}
-              />
-            </div>
-            {formik.touched.email && formik.errors.email && (
-              <span className="text-rose-400 text-[10px]">{formik.errors.email}</span>
-            )}
-          </div>
+          <ArrowLeft size={13} /> Back to Overview
+        </Link>
+      </div>
 
-          {/* Password Field */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-mono text-[10px] text-chailm-textMuted uppercase tracking-wider">
-              Password
-            </label>
-            <div className="relative">
-              <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-chailm-textMuted" />
-              <input
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="••••••••••••"
-                className={`w-full rounded-xl border bg-chailm-bg pl-10 pr-10 py-2.5 text-chailm-textMain placeholder:text-chailm-textMuted outline-none transition-all
-                  ${
-                    formik.touched.password && formik.errors.password
-                      ? 'border-rose-500/60 focus:border-rose-500'
-                      : 'border-chailm-border focus:border-chailm-accentBlue'
-                  }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((p) => !p)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-chailm-textMuted hover:text-chailm-textMain transition-colors cursor-pointer"
+      {/* Auth Card Container */}
+      <div className="w-full flex items-center justify-center my-6 z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.99 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          onMouseMove={spotlightMove}
+          className="w-full max-w-[420px] rounded-2xl spotlight-card relative overflow-hidden"
+          style={{
+            background: '#FFFFFF',
+            border: `1px solid ${colors.hairlineStrong}`,
+            boxShadow: '0 20px 50px -12px rgba(20,23,26,0.08), 0 2px 8px rgba(20,23,26,0.03)',
+          }}
+        >
+          {/* Flush, perfectly clipped top accent bar */}
+          <div
+            className="h-1 w-full"
+            style={{ background: `linear-gradient(90deg, ${colors.cobalt} 0%, ${colors.verified} 100%)` }}
+          />
+
+          <div className="p-7 md:p-9">
+            {/* Header Title */}
+            <div className="flex flex-col items-center mb-7 text-center">
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold mb-3.5"
+                style={{
+                  background: colors.verifiedSoft,
+                  color: colors.verified,
+                  border: `1px solid ${colors.verifiedBorder}`,
+                  ...mono,
+                }}
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <ShieldCheck size={13} />
+                <span>SESSION AUTHENTICATION</span>
+              </div>
+              <h1
+                className="text-2xl md:text-3xl font-medium tracking-tight mb-2"
+                style={{ ...serif, color: colors.ink }}
+              >
+                Authenticate Session
+              </h1>
+              <p className="text-xs leading-relaxed text-[#5C6169] max-w-xs">
+                Sign in to access your isolated knowledge workspaces
+              </p>
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={formik.handleSubmit} noValidate className="flex flex-col gap-4 text-xs">
+              {/* Email Field */}
+              <div className="flex flex-col gap-1.5">
+                <label
+                  className="text-[10px] font-bold uppercase tracking-wider text-[#5C6169]"
+                  style={mono}
+                >
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#93968F]" />
+                  <input
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="you@chailm.com"
+                    className="w-full rounded-xl border pl-10 pr-4 py-2.5 text-xs text-[#14171A] placeholder:text-[#93968F] outline-none transition-all focus:ring-2 focus:ring-[#1E2A5E]/10"
+                    style={{
+                      background: '#FFFFFF',
+                      border: `1px solid ${formik.touched.email && formik.errors.email ? '#E53E3E' : colors.hairlineStrong
+                        }`,
+                    }}
+                  />
+                </div>
+                {formik.touched.email && formik.errors.email && (
+                  <span className="text-red-500 text-[10px] font-medium">{formik.errors.email}</span>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="flex flex-col gap-1.5">
+                <label
+                  className="text-[10px] font-bold uppercase tracking-wider text-[#5C6169]"
+                  style={mono}
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#93968F]" />
+                  <input
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="••••••••••••"
+                    className="w-full rounded-xl border pl-10 pr-10 py-2.5 text-xs text-[#14171A] placeholder:text-[#93968F] outline-none transition-all focus:ring-2 focus:ring-[#1E2A5E]/10"
+                    style={{
+                      background: '#FFFFFF',
+                      border: `1px solid ${formik.touched.password && formik.errors.password ? '#E53E3E' : colors.hairlineStrong
+                        }`,
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#93968F] hover:text-[#14171A] transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {formik.touched.password && formik.errors.password && (
+                  <span className="text-red-500 text-[10px] font-medium">{formik.errors.password}</span>
+                )}
+              </div>
+
+              {/* Error Banner */}
+              {formik.status && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-medium text-red-600 animate-in fade-in"
+                >
+                  {formik.status}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoginPending}
+                className="w-full rounded-full text-white font-medium py-3 px-6 text-xs cursor-pointer flex items-center justify-center gap-2 mt-2 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: colors.cobalt }}
+              >
+                <span>{isLoginPending ? 'AUTHENTICATING GATEWAY...' : 'Establish Session'}</span>
+                <ArrowRight size={14} />
               </button>
+            </form>
+
+            {/* Switch to Signup link */}
+            <div className="pt-5 mt-6 border-t border-[#E2E4E1] text-center text-xs text-[#5C6169]">
+              <p>
+                Don't have credentials?{' '}
+                <Link
+                  to="/signup"
+                  className="font-semibold transition-colors hover:underline"
+                  style={{ color: colors.verified }}
+                >
+                  Create Account
+                </Link>
+              </p>
             </div>
-            {formik.touched.password && formik.errors.password && (
-              <span className="text-rose-400 text-[10px]">{formik.errors.password}</span>
-            )}
           </div>
+        </motion.div>
+      </div>
 
-          {/* Error Banner */}
-          {formik.status && (
-            <div
-              role="alert"
-              className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-[11px] font-medium text-rose-300 animate-in fade-in"
-            >
-              {formik.status}
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoginPending}
-            className="w-full rounded-full bg-chailm-accentBlue/15 hover:bg-chailm-accentBlue/25 text-chailm-accentBlue border border-chailm-accentBlue/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all py-3 text-xs font-medium cursor-pointer flex items-center justify-center space-x-2 mt-2 shadow-lg"
-          >
-            <span>{isLoginPending ? 'AUTHENTICATING GATEWAY...' : 'ESTABLISH SESSION'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-
-        {/* Footer link */}
-        <div className="pt-4 border-t border-chailm-border text-center text-xs text-chailm-textMuted">
-          <p>
-            Don't have credentials?{' '}
-            <Link
-              to="/signup"
-              className="text-chailm-accentBlue font-medium hover:underline transition-colors"
-            >
-              Create Account
-            </Link>
-          </p>
-        </div>
+      {/* Minimal Footer */}
+      <div className="max-w-5xl mx-auto w-full flex items-center justify-center gap-4 text-[11px] text-[#93968F] z-10" style={mono}>
+        <span className="flex items-center gap-1">
+          <CheckCircle2 size={12} className="text-[#1F7A5C]" /> Source-Grounded
+        </span>
+        <span>•</span>
+        <span>Qdrant Vector Isolation</span>
+        <span>•</span>
+        <span>Cohere v3.5 Verified</span>
       </div>
     </div>
   );

@@ -1,13 +1,14 @@
-export default function LandingFooter() {
-  return (
-    <footer className="border-t border-chailm-border py-8 px-6 text-xs text-chailm-textMuted bg-chailm-panel">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center space-x-2">
-          <span className="font-semibold text-chailm-textMain">chaiLM</span>
-          <span>— Multimodal Video & Document Intelligence</span>
-        </div>
+import React from "react";
+import { colors, serif, mono } from "./tokens";
 
-        <div className="flex items-center space-x-6 font-mono text-[11px]">
+export function LandingFooter() {
+  return (
+    <footer className="px-6 py-8" style={{ borderTop: `1px solid ${colors.hairline}` }}>
+      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-medium" style={{ color: colors.slateFaint }}>
+        <div style={serif}>
+          chai<span style={{ color: colors.verified }}>LM</span> — Multimodal Video &amp; Document Intelligence
+        </div>
+        <div className="flex gap-5 flex-wrap" style={mono}>
           <span>Vector Index: Qdrant</span>
           <span>Reranker: Cohere</span>
           <span>Synthesizer: GPT-4o-mini</span>

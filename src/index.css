@@ -1,9 +1,25 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @theme {
-  --font-sans: 'Google Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', sans-serif;
-  --font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Menlo', monospace;
+  /* Typography */
+  --font-serif: 'Fraunces', ui-serif, Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
+  /* Exhibit Ledger Theme (Landing & Marketing) */
+  --color-exhibit-paper: #F5F6F4;
+  --color-exhibit-surface: #FFFFFF;
+  --color-exhibit-surface2: #F0F1EE;
+  --color-exhibit-hairline: #E2E4E1;
+  --color-exhibit-hairlineStrong: #CBCFC9;
+  --color-exhibit-ink: #14171A;
+  --color-exhibit-slate: #5C6169;
+  --color-exhibit-slateFaint: #93968F;
+  --color-exhibit-cobalt: #1E2A5E;
+  --color-exhibit-verified: #1F7A5C;
+
+  /* ChaiLM Dark Studio Theme (Workspace App) */
   --color-chailm-bg: #131314;
   --color-chailm-panel: #1E1F20;
   --color-chailm-card: #28292A;
@@ -26,13 +42,16 @@
     width: 6px;
     height: 6px;
   }
+
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+
   ::-webkit-scrollbar-thumb {
     background: #37393B;
     border-radius: 9999px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: #4A4D50;
   }
@@ -52,26 +71,28 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .chailm-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.02) 0%,
-    rgba(168, 199, 250, 0.12) 50%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.02) 0%,
+      rgba(168, 199, 250, 0.12) 50%,
+      rgba(255, 255, 255, 0.02) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite linear;
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 15px -3px rgba(168, 199, 250, 0.12);
   }
+
   50% {
     box-shadow: 0 0 25px 2px rgba(129, 140, 248, 0.25);
   }
