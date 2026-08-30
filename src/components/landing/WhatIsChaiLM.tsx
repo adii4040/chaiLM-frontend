@@ -53,6 +53,7 @@ const CITATIONS: VideoCitation[] = [
 
 export function WhatIsChaiLM({ reducedMotion }: { reducedMotion: boolean }) {
   const [activeCitation, setActiveCitation] = useState<VideoCitation>(CITATIONS[0]);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const videoId = "zjkBMFhNj_g"; // Andrej Karpathy: Let's build GPT from scratch
 
   const cardVariants = {
@@ -211,7 +212,10 @@ export function WhatIsChaiLM({ reducedMotion }: { reducedMotion: boolean }) {
                     return (
                       <div
                         key={cit.timeSec}
-                        onClick={() => setActiveCitation(cit)}
+                        onClick={() => {
+                          setActiveCitation(cit);
+                          setHasInteracted(true);
+                        }}
                         className={`p-3.5 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col gap-2 ${
                           isSelected
                             ? "bg-[#1F7A5C]/10 border-[#1F7A5C] shadow-xs"
@@ -224,6 +228,11 @@ export function WhatIsChaiLM({ reducedMotion }: { reducedMotion: boolean }) {
                         <div className="flex items-center justify-between pt-1">
                           <button
                             type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveCitation(cit);
+                              setHasInteracted(true);
+                            }}
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
                               isSelected
                                 ? "bg-[#1F7A5C] text-white shadow-xs"
@@ -255,18 +264,19 @@ export function WhatIsChaiLM({ reducedMotion }: { reducedMotion: boolean }) {
                 </div>
               </div>
 
-              {/* Responsive Embedded YouTube Iframe */}
+              {/* Responsive Embedded YouTube Iframe (No autoplay on first render) */}
               <div className="aspect-video bg-black rounded-xl border border-[#CBCFC9] overflow-hidden shadow-inner">
                 <iframe
-                  key={activeCitation.timeSec}
+                  key={`${activeCitation.timeSec}-${hasInteracted}`}
                   className="w-full h-full"
-                  src={`https://www.youtube-nocookie.com/embed/${videoId}?start=${activeCitation.timeSec}&autoplay=1`}
+                  src={`https://www.youtube-nocookie.com/embed/${videoId}?start=${activeCitation.timeSec}&autoplay=${hasInteracted ? 1 : 0}`}
                   title="Andrej Karpathy YouTube Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
               </div>
+
 
               {/* Synced Offset Details */}
               <div className="flex items-center justify-between text-xs font-mono pt-1">

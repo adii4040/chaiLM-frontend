@@ -11,6 +11,7 @@ import WorkspaceCard from '../components/dashboard/WorkspaceCard';
 import CreateWorkspaceModal from '../components/dashboard/CreateWorkspaceModal';
 import DashboardNotification from '../components/dashboard/DashboardNotification';
 import type { WorkspaceSummaryItem } from '../modules/workspace/dto/workspaceDto';
+import { colors } from '../components/landing/tokens';
 
 export default function WorkspaceDashboardPage() {
   const navigate = useNavigate();
@@ -79,12 +80,18 @@ export default function WorkspaceDashboardPage() {
     });
 
   return (
-    <div className="min-h-screen flex flex-col bg-chailm-bg text-chailm-textMain font-sans selection:bg-chailm-accentBlue/20 selection:text-white">
+    <div
+      className="min-h-screen flex flex-col font-sans"
+      style={{
+        background: colors.paper,
+        color: colors.ink,
+      }}
+    >
       {/* TOP HEADER */}
       <DashboardHeader onOpenCreateModal={() => setIsCreateModalOpen(true)} />
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-8 space-y-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-10 space-y-8">
         {/* HERO BAR & STATS */}
         <DashboardHero totalCount={sessions.length} />
 
@@ -98,11 +105,11 @@ export default function WorkspaceDashboardPage() {
 
         {/* WORKSPACES GRID */}
         {isLoading ? (
-          <div className="py-20 text-center text-chailm-textMuted italic text-xs">
+          <div className="py-24 text-center text-[#5C6169] italic text-xs">
             Loading workspaces...
           </div>
         ) : filteredSessions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSessions.map((session) => (
               <WorkspaceCard
                 key={session.workspaceId || session.sessionId}
@@ -111,16 +118,51 @@ export default function WorkspaceDashboardPage() {
                 onDeleteWorkspace={handleDelete}
               />
             ))}
+
+            {/* Create New Workspace Card at the end of grid */}
+            <div
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-white/60 hover:bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[240px]"
+              style={{
+                border: `2px dashed ${colors.hairlineStrong}`,
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[#1F7A5C] shadow-xs"
+                style={{ background: colors.verifiedSoft }}
+              >
+                <FolderOpen className="w-6 h-6 text-[#1F7A5C] group-hover:text-white transition-colors duration-200" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-[#14171A] group-hover:text-[#1F7A5C] transition-colors">
+                  Create New Workspace
+                </h3>
+                <p className="text-xs text-[#5C6169] max-w-[220px] leading-relaxed">
+                  Start an isolated grounding session to index YouTube videos, PDFs & web articles
+                </p>
+              </div>
+              <span
+                className="text-[11px] font-semibold px-3 py-1 rounded-full text-[#1F7A5C] bg-[#1F7A5C]/10 border border-[#1F7A5C]/20 group-hover:bg-[#1F7A5C] group-hover:text-white transition-all font-mono"
+              >
+                + New Session
+              </span>
+            </div>
           </div>
         ) : (
           /* Empty Search State */
-          <div className="bg-chailm-panel border border-chailm-border rounded-3xl p-12 text-center space-y-4 max-w-md mx-auto my-12">
-            <div className="w-12 h-12 rounded-2xl bg-chailm-card border border-chailm-border text-chailm-accentBlue flex items-center justify-center mx-auto">
-              <FolderOpen className="w-6 h-6" />
+          <div
+            className="bg-white rounded-3xl p-12 text-center space-y-4 max-w-md mx-auto my-12 shadow-sm"
+            style={{ border: `1px solid ${colors.hairlineStrong}` }}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto"
+              style={{ background: colors.verifiedSoft, color: colors.verified }}
+            >
+              <FolderOpen className="w-7 h-7" />
             </div>
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium text-chailm-textMain">No workspaces found</h3>
-              <p className="text-xs text-chailm-textMuted leading-relaxed">
+            <div className="space-y-1.5">
+              <h3 className="text-base font-semibold text-[#14171A]">No workspaces found</h3>
+              <p className="text-xs text-[#5C6169] leading-relaxed">
                 {searchQuery
                   ? `No active sessions matched "${searchQuery}". Try searching for another keyword or create a new workspace.`
                   : 'No active workspaces found. Create your first workspace session below.'}
@@ -129,14 +171,15 @@ export default function WorkspaceDashboardPage() {
             {searchQuery ? (
               <button
                 onClick={() => setSearchQuery('')}
-                className="px-4 py-2 bg-chailm-card hover:bg-chailm-hover text-chailm-textMain text-xs rounded-full border border-chailm-border transition-all cursor-pointer"
+                className="px-5 py-2 bg-[#F0F1EE] hover:bg-[#E2E4E1] text-[#14171A] text-xs font-semibold rounded-full transition-all cursor-pointer"
               >
                 Clear Search
               </button>
             ) : (
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="px-4 py-2 bg-chailm-accentBlue/10 hover:bg-chailm-accentBlue/20 text-chailm-accentBlue text-xs rounded-full border border-chailm-accentBlue/30 transition-all cursor-pointer"
+                className="px-5 py-2.5 text-white text-xs font-medium rounded-full transition-all cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5"
+                style={{ background: colors.verified }}
               >
                 Create Workspace
               </button>

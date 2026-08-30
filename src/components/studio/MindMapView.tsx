@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Network, ChevronDown, ChevronRight, GitBranch, Sparkles } from 'lucide-react';
 import type { MindMapData } from '../../modules/studio/dto/studioDto';
+import { colors, mono } from '../landing/tokens';
 
 interface MindMapViewProps {
   data: MindMapData;
@@ -36,35 +37,35 @@ export default function MindMapView({ data }: MindMapViewProps) {
     setExpandedBranches({});
   };
 
-  const branchColors = [
-    'border-blue-500/30 text-blue-400 bg-blue-500/10',
-    'border-emerald-500/30 text-emerald-400 bg-emerald-500/10',
-    'border-amber-500/30 text-amber-400 bg-amber-500/10',
-    'border-purple-500/30 text-purple-400 bg-purple-500/10',
-    'border-rose-500/30 text-rose-400 bg-rose-500/10',
+  const branchStyles = [
+    { badge: 'bg-blue-100 text-blue-800 border-blue-300', dot: 'bg-blue-600', icon: 'text-blue-600' },
+    { badge: 'bg-emerald-100 text-emerald-800 border-emerald-300', dot: 'bg-emerald-600', icon: 'text-emerald-600' },
+    { badge: 'bg-amber-100 text-amber-800 border-amber-300', dot: 'bg-amber-600', icon: 'text-amber-600' },
+    { badge: 'bg-purple-100 text-purple-800 border-purple-300', dot: 'bg-purple-600', icon: 'text-purple-600' },
+    { badge: 'bg-rose-100 text-rose-800 border-rose-300', dot: 'bg-rose-600', icon: 'text-rose-600' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12 animate-in fade-in duration-300">
       {/* Top Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2 text-xs font-mono text-chailm-textMuted">
-          <Network className="w-4 h-4 text-chailm-accentBlue" />
-          <span>{branches.length} Primary Conceptual Branches</span>
+        <div className="flex items-center space-x-2 text-xs font-mono font-bold text-[#5C6169]" style={mono}>
+          <Network className="w-4 h-4 text-purple-600" />
+          <span>{branches.length} Conceptual Branches</span>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             type="button"
             onClick={expandAll}
-            className="px-3 py-1.5 rounded-xl bg-chailm-card hover:bg-chailm-hover border border-chailm-border text-[11px] font-mono text-chailm-textMuted hover:text-chailm-textMain cursor-pointer"
+            className="px-3 py-1.5 rounded-full bg-white hover:bg-[#F5F6F4] border border-[#CBCFC9] text-[11px] font-mono font-semibold text-[#14171A] cursor-pointer shadow-xs"
           >
             Expand All
           </button>
           <button
             type="button"
             onClick={collapseAll}
-            className="px-3 py-1.5 rounded-xl bg-chailm-card hover:bg-chailm-hover border border-chailm-border text-[11px] font-mono text-chailm-textMuted hover:text-chailm-textMain cursor-pointer"
+            className="px-3 py-1.5 rounded-full bg-white hover:bg-[#F5F6F4] border border-[#CBCFC9] text-[11px] font-mono font-semibold text-[#14171A] cursor-pointer shadow-xs"
           >
             Collapse All
           </button>
@@ -72,13 +73,16 @@ export default function MindMapView({ data }: MindMapViewProps) {
       </div>
 
       {/* Central Root Node */}
-      <div className="bg-chailm-panel border border-chailm-accentBlue/40 rounded-3xl p-6 shadow-xl relative overflow-hidden text-center">
-        <div className="brand-gradient-bar h-1 w-full absolute top-0 left-0"></div>
-        <span className="text-[10px] font-mono text-chailm-accentBlue uppercase tracking-wider flex items-center justify-center space-x-1 mb-1">
-          <Sparkles className="w-3 h-3" />
-          <span>Central Core Node</span>
+      <div
+        className="bg-white rounded-3xl p-6 shadow-sm relative overflow-hidden text-center"
+        style={{ border: `1.5px solid ${colors.hairlineStrong}` }}
+      >
+        <div className="h-1 w-full bg-purple-600 absolute top-0 left-0 right-0" />
+        <span className="text-[10px] font-mono font-bold text-purple-700 uppercase tracking-wider flex items-center justify-center space-x-1 mb-1" style={mono}>
+          <Sparkles className="w-3 h-3 text-purple-600" />
+          <span>Central Knowledge Core</span>
         </span>
-        <h2 className="text-base md:text-lg font-semibold text-chailm-textMain">
+        <h2 className="text-base md:text-lg font-bold text-[#14171A]">
           {root?.label || data.mapTitle}
         </h2>
       </div>
@@ -87,32 +91,34 @@ export default function MindMapView({ data }: MindMapViewProps) {
       <div className="space-y-4">
         {branches.map((branch, bIdx) => {
           const isExpanded = expandedBranches[bIdx] ?? true;
-          const colorClass = branchColors[bIdx % branchColors.length];
+          const style = branchStyles[bIdx % branchStyles.length];
 
           return (
             <div
               key={bIdx}
-              className="bg-chailm-panel border border-chailm-border rounded-3xl overflow-hidden shadow-xs"
+              className="bg-white border border-[#CBCFC9] rounded-3xl overflow-hidden shadow-xs hover:border-purple-300 transition-all"
             >
               {/* Branch Header */}
               <button
                 type="button"
                 onClick={() => toggleBranch(bIdx)}
-                className="w-full p-4 flex items-center justify-between text-left hover:bg-chailm-hover/50 transition cursor-pointer"
+                className="w-full p-4.5 flex items-center justify-between text-left hover:bg-[#FAFBF9] transition cursor-pointer"
               >
-                <div className="flex items-center space-x-3">
-                  <span className={`px-2.5 py-1 rounded-xl text-xs font-mono font-semibold border ${colorClass}`}>
-                    Branch {bIdx + 1}
-                  </span>
-                  <h3 className="text-xs md:text-sm font-medium text-chailm-textMain">
-                    {branch.label}
-                  </h3>
+                <div className="flex items-center space-x-3 min-w-0 pr-2">
+                  <div className={`p-1.5 rounded-xl border flex items-center justify-center ${style.badge}`}>
+                    <GitBranch className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xs md:text-sm font-bold text-[#14171A] truncate">
+                      {branch.label}
+                    </h3>
+                    <span className="text-[11px] font-mono text-[#5C6169]" style={mono}>
+                      {branch.subBranches?.length || 0} Sub-nodes
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center space-x-2 text-chailm-textMuted">
-                  <span className="text-[10px] font-mono">
-                    {branch.subBranches?.length || 0} sub-nodes
-                  </span>
+                <div className="p-1 rounded-lg bg-[#F5F6F4] text-[#5C6169]">
                   {isExpanded ? (
                     <ChevronDown className="w-4 h-4" />
                   ) : (
@@ -121,26 +127,26 @@ export default function MindMapView({ data }: MindMapViewProps) {
                 </div>
               </button>
 
-              {/* Sub Branches & Key Details */}
+              {/* Sub Branches & Concepts */}
               {isExpanded && branch.subBranches && branch.subBranches.length > 0 && (
-                <div className="p-5 pt-0 border-t border-chailm-border/60">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+                <div className="p-5 pt-0 border-t space-y-3" style={{ borderColor: colors.hairline }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3">
                     {branch.subBranches.map((sub, sIdx) => (
                       <div
                         key={sIdx}
-                        className="bg-chailm-card/70 border border-chailm-border/70 rounded-2xl p-4 space-y-2"
+                        className="bg-[#FAFBF9] p-3.5 rounded-2xl border border-[#E2E4E1] space-y-2 text-xs hover:border-[#CBCFC9] transition"
                       >
                         <div className="flex items-center space-x-2">
-                          <GitBranch className="w-3.5 h-3.5 text-chailm-accentBlue shrink-0" />
-                          <h4 className="text-xs font-semibold text-chailm-textMain truncate">
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${style.dot}`} />
+                          <h4 className="font-bold text-[#14171A] text-xs">
                             {sub.label}
                           </h4>
                         </div>
 
                         {sub.keyDetails && sub.keyDetails.length > 0 && (
-                          <ul className="space-y-1 pl-4 text-xs text-chailm-textMuted">
+                          <ul className="space-y-1 pl-4">
                             {sub.keyDetails.map((detail, dIdx) => (
-                              <li key={dIdx} className="list-disc leading-relaxed">
+                              <li key={dIdx} className="text-[11px] text-[#5C6169] list-disc leading-relaxed">
                                 {detail}
                               </li>
                             ))}

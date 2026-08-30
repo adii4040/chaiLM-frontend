@@ -62,9 +62,9 @@ export function LandingHero({ reducedMotion }: { reducedMotion: boolean }) {
           className="text-lg md:text-xl max-w-3xl mb-10 leading-relaxed text-left"
           style={{ color: colors.slate }}
         >
-          ChaiLM ingests your PDFs, YouTube lectures, and web articles into one workspace, then answers with citations you can click — a page number
+          ChaiLM ingests your PDFs, YouTube lectures, and web articles into one workspace, then answers with citations you can click — a page number {" "}
           <ExhibitStamp small> Page 12 </ExhibitStamp>
-          {" "}or a video timestamp
+          {" "}or a video timestamp {" "}
           <ExhibitStamp small> 00:14:22 </ExhibitStamp>
           {" "}that jumps straight to the source.
         </motion.p>

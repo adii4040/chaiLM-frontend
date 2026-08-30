@@ -10,6 +10,7 @@ import {
   Layers,
 } from 'lucide-react';
 import type { WorkspaceSourceItem } from '../modules/workspace/dto/workspaceDto';
+import { colors, mono } from './landing/tokens';
 
 export interface ActiveMediaState {
   sourceType: string;
@@ -43,10 +44,6 @@ export default function RightPlayerSidebar({
   selectedSourceIds = [],
   onClose,
 }: RightPlayerSidebarProps) {
-  // Determine all candidate sources to show in accordion
-  // 1. If selectedSourceIds has items, use those sources
-  // 2. Otherwise if sources array exists, use all sources
-  // 3. Fallback to single media item if provided
   const candidateSources: {
     sourceId: string;
     sourceType: string;
@@ -100,7 +97,6 @@ export default function RightPlayerSidebar({
         setExpandedIds([candidateSources[0].sourceId]);
       }
     } else if (candidateSources.length > 0 && expandedIds.length === 0) {
-      // Default expand the first item
       setExpandedIds([candidateSources[0].sourceId]);
     }
   }, [media, candidateSources.length]);
@@ -120,16 +116,32 @@ export default function RightPlayerSidebar({
   };
 
   return (
-    <aside className="w-96 md:w-[460px] bg-chailm-panel border-l border-chailm-border flex flex-col h-full shrink-0 shadow-2xl z-40 transition-all duration-300 animate-in slide-in-from-right duration-200">
+    <aside
+      className="w-96 md:w-[460px] bg-white flex flex-col h-full shrink-0 shadow-2xl z-40 transition-all duration-300 animate-in slide-in-from-right duration-200"
+      style={{ borderLeft: `1px solid ${colors.hairline}` }}
+    >
       {/* Header Bar */}
-      <div className="p-3.5 border-b border-chailm-border flex items-center justify-between gap-2 bg-chailm-panel/90 shrink-0">
+      <div className="p-3.5 border-b flex items-center justify-between gap-2 shrink-0 bg-white" style={{ borderColor: colors.hairline }}>
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: colors.verifiedSoft, color: colors.verified }}
+          >
             <Layers className="w-4 h-4" />
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-semibold text-chailm-textMain">Source Previews</span>
-            <span className="font-mono text-[10px] text-chailm-accentBlue bg-chailm-accentBlue/10 border border-chailm-accentBlue/20 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-bold text-[#14171A]" style={mono}>
+              SOURCE PREVIEWS
+            </span>
+            <span
+              className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                ...mono,
+                background: colors.verifiedSoft,
+                color: colors.verified,
+                border: `1px solid ${colors.verifiedBorder}`,
+              }}
+            >
               {candidateSources.length} {candidateSources.length === 1 ? 'Source' : 'Sources'}
             </span>
           </div>
@@ -140,7 +152,7 @@ export default function RightPlayerSidebar({
             <button
               type="button"
               onClick={expandedIds.length === candidateSources.length ? collapseAll : expandAll}
-              className="text-[10px] font-mono text-chailm-textMuted hover:text-chailm-textMain px-2 py-1 rounded-lg bg-chailm-card border border-chailm-border transition cursor-pointer"
+              className="text-[10px] font-mono font-semibold text-[#5C6169] hover:text-[#14171A] px-2.5 py-1 rounded-lg bg-[#F5F6F4] border border-[#CBCFC9] transition cursor-pointer"
             >
               {expandedIds.length === candidateSources.length ? 'Collapse All' : 'Expand All'}
             </button>
@@ -148,7 +160,7 @@ export default function RightPlayerSidebar({
 
           <button
             onClick={onClose}
-            className="p-1.5 text-chailm-textMuted hover:text-chailm-textMain hover:bg-chailm-hover rounded-full transition cursor-pointer shrink-0"
+            className="p-1.5 text-[#93968F] hover:text-[#14171A] hover:bg-gray-100 rounded-full transition cursor-pointer shrink-0"
             title="Close Previews"
           >
             <X className="w-4 h-4" />
@@ -157,7 +169,7 @@ export default function RightPlayerSidebar({
       </div>
 
       {/* Accordion List Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 min-h-0" style={{ background: colors.paper }}>
         {candidateSources.length > 0 ? (
           candidateSources.map((source) => {
             const isExpanded = expandedIds.includes(source.sourceId);
@@ -190,10 +202,8 @@ export default function RightPlayerSidebar({
             return (
               <div
                 key={source.sourceId}
-                className={`rounded-2xl border transition-all overflow-hidden ${
-                  isExpanded
-                    ? 'bg-chailm-card/90 border-chailm-accentBlue/40 shadow-sm'
-                    : 'bg-chailm-card/40 border-chailm-border hover:border-chailm-border/80'
+                className={`rounded-2xl border transition-all overflow-hidden bg-white shadow-xs ${
+                  isExpanded ? 'border-[#CBCFC9]' : 'border-[#E2E4E1] hover:border-[#CBCFC9]'
                 }`}
               >
                 {/* Accordion Item Header */}
@@ -203,15 +213,27 @@ export default function RightPlayerSidebar({
                   className="w-full p-3.5 flex items-center justify-between text-left cursor-pointer transition select-none group"
                 >
                   <div className="flex items-center space-x-2.5 min-w-0 pr-2">
-                    {isYoutube && <Video className="w-4 h-4 text-rose-400 shrink-0" />}
-                    {isPdf && <FileText className="w-4 h-4 text-amber-400 shrink-0" />}
-                    {isWeb && <Globe className="w-4 h-4 text-blue-400 shrink-0" />}
+                    {isYoutube && (
+                      <div className="w-6 h-6 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+                        <Video className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                    {isPdf && (
+                      <div className="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                        <FileText className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                    {isWeb && (
+                      <div className="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                        <Globe className="w-3.5 h-3.5" />
+                      </div>
+                    )}
 
                     <div className="min-w-0">
-                      <h3 className="text-xs font-semibold text-chailm-textMain truncate group-hover:text-chailm-accentBlue transition">
+                      <h3 className="text-xs font-semibold text-[#14171A] truncate group-hover:text-[#1F7A5C] transition">
                         {source.title}
                       </h3>
-                      <span className="text-[10px] font-mono text-chailm-textMuted uppercase">
+                      <span className="text-[10px] font-mono text-[#5C6169] uppercase font-bold" style={mono}>
                         {source.sourceType}
                       </span>
                     </div>
@@ -219,12 +241,20 @@ export default function RightPlayerSidebar({
 
                   <div className="flex items-center space-x-2 shrink-0">
                     {isMatchingMedia && (
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                        Cited
+                      <span
+                        className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold"
+                        style={{
+                          ...mono,
+                          background: colors.verifiedSoft,
+                          color: colors.verified,
+                          border: `1px solid ${colors.verifiedBorder}`,
+                        }}
+                      >
+                        Active Citation
                       </span>
                     )}
 
-                    <div className="p-1 rounded-lg bg-chailm-bg border border-chailm-border text-chailm-textMuted group-hover:text-chailm-textMain transition">
+                    <div className="p-1 rounded-lg bg-[#F5F6F4] text-[#5C6169] group-hover:text-[#14171A] transition">
                       {isExpanded ? (
                         <ChevronUp className="w-3.5 h-3.5" />
                       ) : (
@@ -236,11 +266,11 @@ export default function RightPlayerSidebar({
 
                 {/* Accordion Item Expanded Body */}
                 {isExpanded && (
-                  <div className="p-4 pt-0 border-t border-chailm-border/60 space-y-3.5 animate-in fade-in duration-200">
+                  <div className="p-4 pt-0 border-t space-y-3.5 animate-in fade-in duration-200" style={{ borderColor: colors.hairline }}>
                     {/* YouTube Video Player Embed */}
                     {isYoutube && videoId ? (
                       <div className="space-y-3 pt-3">
-                        <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-chailm-border shadow-xl">
+                        <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-[#CBCFC9] shadow-md">
                           <iframe
                             key={`${videoId}-${startSecs}`}
                             src={`https://www.youtube-nocookie.com/embed/${videoId}?start=${startSecs}&autoplay=0`}
@@ -251,10 +281,17 @@ export default function RightPlayerSidebar({
                           />
                         </div>
 
-                        <div className="p-3 bg-chailm-bg border border-chailm-border rounded-xl flex items-center justify-between text-xs">
-                          <div className="flex items-center space-x-2 font-mono text-[11px]">
-                            <span className="text-chailm-textMuted">Timestamp:</span>
-                            <span className="text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                        <div className="p-3 bg-[#F5F6F4] border border-[#E2E4E1] rounded-xl flex items-center justify-between text-xs">
+                          <div className="flex items-center space-x-2 font-mono text-[11px]" style={mono}>
+                            <span className="text-[#5C6169]">Timestamp:</span>
+                            <span
+                              className="font-bold px-2 py-0.5 rounded-full"
+                              style={{
+                                background: colors.verifiedSoft,
+                                color: colors.verified,
+                                border: `1px solid ${colors.verifiedBorder}`,
+                              }}
+                            >
                               {formattedTime ? `${formattedTime} (${startSecs}s)` : `${startSecs}s`}
                             </span>
                           </div>
@@ -263,9 +300,9 @@ export default function RightPlayerSidebar({
                             href={`${source.sourceUrl}&t=${startSecs}s`}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-xs text-chailm-accentBlue hover:underline inline-flex items-center space-x-1 font-medium"
+                            className="text-xs text-[#1F7A5C] hover:underline inline-flex items-center space-x-1 font-semibold"
                           >
-                            <span>Open on YouTube</span>
+                            <span>Open YouTube</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </div>
@@ -273,8 +310,16 @@ export default function RightPlayerSidebar({
                     ) : isPdf ? (
                       /* PDF Document Embed */
                       <div className="space-y-3 pt-3 flex flex-col">
-                        <div className="bg-chailm-bg border border-chailm-border rounded-xl p-3 flex justify-between items-center text-xs">
-                          <span className="font-mono text-amber-300 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                        <div className="bg-[#F5F6F4] border border-[#E2E4E1] rounded-xl p-3 flex justify-between items-center text-xs">
+                          <span
+                            className="font-mono font-bold px-2.5 py-0.5 rounded-full"
+                            style={{
+                              ...mono,
+                              background: '#FEF3C7',
+                              color: '#B45309',
+                              border: '1px solid #FDE68A',
+                            }}
+                          >
                             Page {pageNum}
                           </span>
 
@@ -283,16 +328,16 @@ export default function RightPlayerSidebar({
                               href={pdfUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-chailm-accentBlue hover:underline flex items-center gap-1 text-[11px] font-medium"
+                              className="text-[#1F7A5C] hover:underline flex items-center gap-1 text-[11px] font-semibold"
                             >
-                              <span>Open External PDF</span>
+                              <span>Open PDF</span>
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           )}
                         </div>
 
                         {pdfUrl ? (
-                          <div className="h-[420px] bg-chailm-bg rounded-2xl overflow-hidden border border-chailm-border shadow-xl">
+                          <div className="h-[420px] bg-white rounded-xl overflow-hidden border border-[#CBCFC9] shadow-md">
                             <iframe
                               key={`${pdfUrl}-${pageNum}`}
                               src={`${pdfUrl}#page=${pageNum}`}
@@ -301,23 +346,23 @@ export default function RightPlayerSidebar({
                             />
                           </div>
                         ) : (
-                          <div className="p-4 bg-chailm-bg rounded-xl border border-chailm-border text-xs text-chailm-textMuted italic text-center">
+                          <div className="p-4 bg-[#F5F6F4] rounded-xl border border-[#E2E4E1] text-xs text-[#5C6169] italic text-center">
                             No external URL available for this PDF.
                           </div>
                         )}
                       </div>
                     ) : (
                       /* Website Source Link */
-                      <div className="bg-chailm-bg p-3.5 rounded-xl border border-chailm-border text-xs space-y-2 pt-3">
-                        <p className="text-chailm-textMain font-medium">{source.title}</p>
+                      <div className="bg-[#F5F6F4] p-3.5 rounded-xl border border-[#E2E4E1] text-xs space-y-2 pt-3">
+                        <p className="text-[#14171A] font-semibold">{source.title}</p>
                         {source.sourceUrl && (
                           <a
                             href={source.sourceUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-chailm-accentBlue hover:underline flex items-center gap-1 text-[11px] font-medium"
+                            className="text-[#1F7A5C] hover:underline flex items-center gap-1 text-[11px] font-semibold"
                           >
-                            <span>Open Web Link</span>
+                            <span>Open Web Source</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
@@ -329,10 +374,13 @@ export default function RightPlayerSidebar({
             );
           })
         ) : (
-          <div className="p-8 text-center bg-chailm-card/40 rounded-3xl border border-dashed border-chailm-border my-auto space-y-2">
-            <Layers className="w-6 h-6 text-chailm-textMuted mx-auto" />
-            <p className="text-xs text-chailm-textMain font-medium">No sources to preview</p>
-            <p className="text-[11px] text-chailm-textMuted leading-relaxed">
+          <div
+            className="p-8 text-center bg-white rounded-3xl space-y-2 shadow-xs my-auto"
+            style={{ border: `1px dashed ${colors.hairlineStrong}` }}
+          >
+            <Layers className="w-6 h-6 text-[#93968F] mx-auto" />
+            <p className="text-xs text-[#14171A] font-semibold">No sources to preview</p>
+            <p className="text-[11px] text-[#5C6169] leading-relaxed">
               Add or select knowledge sources in this workspace to preview them here.
             </p>
           </div>

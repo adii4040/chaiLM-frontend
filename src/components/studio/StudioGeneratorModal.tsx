@@ -9,6 +9,7 @@ import {
   useGenerateMindMap,
   useGenerateAudioOverview,
 } from '../../modules/studio/mutation';
+import { colors, mono, serif } from '../landing/tokens';
 
 interface StudioGeneratorModalProps {
   workspaceId: string;
@@ -96,31 +97,44 @@ export default function StudioGeneratorModal({
     }
   };
 
-  const featureMetadata: Record<StudioArtifactType, { label: string; icon: any; desc: string }> = {
+  const featureMetadata: Record<
+    StudioArtifactType,
+    { label: string; icon: any; desc: string; colorBg: string; borderTop: string }
+  > = {
     study_guide: {
       label: 'Study Guide',
       icon: BookOpen,
       desc: 'Synthesize executive summaries, thematic chapter modules, key takeaways, and domain glossaries.',
+      colorBg: 'bg-blue-600 text-white',
+      borderTop: 'bg-blue-600',
     },
     flashcards: {
       label: 'Flashcard Deck',
       icon: Layers,
       desc: 'Generate active recall question-answer cards with hints, citations, and difficulty tracking.',
+      colorBg: 'bg-amber-600 text-white',
+      borderTop: 'bg-amber-600',
     },
     quiz: {
       label: 'Assessment Quiz',
       icon: HelpCircle,
       desc: 'Create an interactive test with multiple-choice options, answers, and comprehensive explanations.',
+      colorBg: 'bg-[#1F7A5C] text-white',
+      borderTop: 'bg-[#1F7A5C]',
     },
     mindmap: {
       label: 'Hierarchical Mind Map',
       icon: Network,
       desc: 'Build an expandable multi-level conceptual tree mapping all sections of your source document.',
+      colorBg: 'bg-purple-600 text-white',
+      borderTop: 'bg-purple-600',
     },
     audio_overview: {
       label: 'Audio Overview Script',
       icon: Mic,
       desc: 'Produce a 2-host conversational podcast dialogue exploring key themes with simulated audio playback.',
+      colorBg: 'bg-rose-600 text-white',
+      borderTop: 'bg-rose-600',
     },
   };
 
@@ -128,21 +142,24 @@ export default function StudioGeneratorModal({
   const FeatureIcon = currentMeta.icon;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-chailm-panel border border-chailm-border rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative overflow-hidden">
-        <div className="brand-gradient-bar h-1 w-full absolute top-0 left-0"></div>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div
+        className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative overflow-hidden"
+        style={{ border: `1px solid ${colors.hairlineStrong}` }}
+      >
+        <div className={`h-1 w-full absolute top-0 left-0 right-0 ${currentMeta.borderTop}`} />
 
-        {/* Modal Header for Selected Feature */}
-        <div className="flex justify-between items-start border-b border-chailm-border pb-3">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-chailm-accentBlue/10 border border-chailm-accentBlue/20 text-chailm-accentBlue">
+        {/* Modal Header */}
+        <div className="flex justify-between items-start border-b pb-3.5" style={{ borderColor: colors.hairline }}>
+          <div className="flex items-center space-x-3">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs ${currentMeta.colorBg}`}>
               <FeatureIcon className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-chailm-textMain text-sm">
+              <h3 className="font-bold text-[#14171A] text-sm" style={serif}>
                 Generate {currentMeta.label}
               </h3>
-              <p className="text-[11px] text-chailm-textMuted leading-tight mt-0.5">
+              <p className="text-[11px] text-[#5C6169] leading-tight mt-0.5">
                 {currentMeta.desc}
               </p>
             </div>
@@ -151,23 +168,24 @@ export default function StudioGeneratorModal({
           <button
             onClick={onClose}
             disabled={isPending}
-            className="text-chailm-textMuted hover:text-chailm-textMain cursor-pointer disabled:opacity-40 p-1"
+            className="text-[#93968F] hover:text-[#14171A] p-1 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           {/* Target Source Document */}
           {sources.length > 0 && (
-            <div className="space-y-1 text-xs">
-              <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
+            <div className="space-y-1">
+              <label className="text-[10px] font-mono font-bold text-[#5C6169] uppercase tracking-wider" style={mono}>
                 Target Knowledge Source
               </label>
               <select
                 value={selectedSourceId}
                 onChange={(e) => setSelectedSourceId(e.target.value)}
-                className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain focus:outline-none focus:border-chailm-accentBlue font-sans"
+                className="w-full bg-[#F5F6F4] rounded-xl px-3 py-2 text-xs text-[#14171A] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1F7A5C]/20 cursor-pointer"
+                style={{ border: `1px solid ${colors.hairlineStrong}` }}
               >
                 {sources.map((s) => (
                   <option key={s.sourceId} value={s.sourceId}>
@@ -180,8 +198,8 @@ export default function StudioGeneratorModal({
 
           {/* Flashcard Specific Options */}
           {artifactType === 'flashcards' && (
-            <div className="space-y-1.5 text-xs animate-in fade-in duration-150">
-              <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
+            <div className="space-y-1.5 animate-in fade-in duration-150">
+              <label className="text-[10px] font-mono font-bold text-[#5C6169] uppercase tracking-wider" style={mono}>
                 Number of Cards
               </label>
               <div className="flex items-center gap-1.5">
@@ -190,10 +208,10 @@ export default function StudioGeneratorModal({
                     key={count}
                     type="button"
                     onClick={() => setCardCount(count)}
-                    className={`flex-1 py-1 rounded-xl border text-xs font-mono font-medium transition cursor-pointer ${
+                    className={`flex-1 py-1.5 rounded-xl border text-xs font-mono font-bold transition cursor-pointer ${
                       cardCount === count
-                        ? 'bg-chailm-card border-chailm-accentBlue text-chailm-accentBlue font-bold shadow-xs'
-                        : 'bg-chailm-bg border-chailm-border text-chailm-textMuted hover:text-chailm-textMain'
+                        ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-xs'
+                        : 'bg-[#F5F6F4] border-[#E2E4E1] text-[#5C6169] hover:text-[#14171A]'
                     }`}
                   >
                     {count}
@@ -203,15 +221,15 @@ export default function StudioGeneratorModal({
             </div>
           )}
 
-          {/* Quiz Specific Options: Prominent Number of Questions & Difficulty */}
+          {/* Quiz Specific Options */}
           {artifactType === 'quiz' && (
             <div className="space-y-2 animate-in fade-in duration-150">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-mono text-chailm-textMuted uppercase tracking-wider">
+                  <label className="text-[10px] font-mono font-bold text-[#5C6169] uppercase tracking-wider" style={mono}>
                     Number of Questions
                   </label>
-                  <span className="text-[11px] font-mono font-bold text-chailm-accentBlue">
+                  <span className="text-[11px] font-mono font-bold text-[#1F7A5C]" style={mono}>
                     {questionCount} Questions
                   </span>
                 </div>
@@ -222,10 +240,10 @@ export default function StudioGeneratorModal({
                       key={num}
                       type="button"
                       onClick={() => setQuestionCount(num)}
-                      className={`flex-1 py-1.5 rounded-xl border text-xs font-mono font-medium transition cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-xl border text-xs font-mono font-bold transition cursor-pointer ${
                         questionCount === num
-                          ? 'bg-chailm-card border-chailm-accentBlue text-chailm-accentBlue font-bold shadow-xs'
-                          : 'bg-chailm-bg border-chailm-border text-chailm-textMuted hover:text-chailm-textMain'
+                          ? 'bg-emerald-100 border-emerald-300 text-emerald-800 shadow-xs'
+                          : 'bg-[#F5F6F4] border-[#E2E4E1] text-[#5C6169] hover:text-[#14171A]'
                       }`}
                     >
                       {num} Qs
@@ -236,22 +254,24 @@ export default function StudioGeneratorModal({
 
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div className="space-y-1 text-xs">
-                  <label className="text-[10px] font-mono text-chailm-textMuted">Custom Count (3–25)</label>
+                  <label className="text-[10px] font-mono text-[#5C6169] font-bold" style={mono}>Custom Count (3–25)</label>
                   <input
                     type="number"
                     min="3"
                     max="25"
                     value={questionCount}
                     onChange={(e) => setQuestionCount(Number(e.target.value))}
-                    className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-1.5 text-xs text-chailm-textMain font-mono focus:outline-none focus:border-chailm-accentBlue"
+                    className="w-full bg-[#F5F6F4] rounded-xl px-3 py-1.5 text-xs text-[#14171A] font-mono focus:outline-none"
+                    style={{ border: `1px solid ${colors.hairlineStrong}` }}
                   />
                 </div>
                 <div className="space-y-1 text-xs">
-                  <label className="text-[10px] font-mono text-chailm-textMuted">Difficulty Level</label>
+                  <label className="text-[10px] font-mono text-[#5C6169] font-bold" style={mono}>Difficulty Level</label>
                   <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value as any)}
-                    className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-1.5 text-xs text-chailm-textMain font-sans focus:outline-none focus:border-chailm-accentBlue"
+                    className="w-full bg-[#F5F6F4] rounded-xl px-3 py-1.5 text-xs text-[#14171A] font-sans focus:outline-none cursor-pointer"
+                    style={{ border: `1px solid ${colors.hairlineStrong}` }}
                   >
                     <option value="easy">Easy (Definitions)</option>
                     <option value="medium">Medium (Mechanics)</option>
@@ -264,7 +284,7 @@ export default function StudioGeneratorModal({
 
           {/* User Custom Instructions / Prompt */}
           <div className="space-y-1 text-xs">
-            <label className="text-[11px] font-mono text-chailm-textMuted">
+            <label className="text-[10px] font-mono text-[#5C6169] font-bold uppercase" style={mono}>
               Custom Focus / Prompt (Optional)
             </label>
             <textarea
@@ -272,13 +292,14 @@ export default function StudioGeneratorModal({
               placeholder="e.g. Focus on character relationships, trade-offs, or specific section questions..."
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}
-              className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain placeholder-chailm-textMuted focus:outline-none focus:border-chailm-accentBlue font-sans resize-none"
+              className="w-full bg-[#F5F6F4] rounded-xl px-3.5 py-2 text-xs text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans resize-none"
+              style={{ border: `1px solid ${colors.hairlineStrong}` }}
             />
           </div>
 
           {/* Optional Title */}
           <div className="space-y-1 text-xs">
-            <label className="text-[11px] font-mono text-chailm-textMuted">
+            <label className="text-[10px] font-mono text-[#5C6169] font-bold uppercase" style={mono}>
               Custom Title (Optional)
             </label>
             <input
@@ -286,30 +307,32 @@ export default function StudioGeneratorModal({
               placeholder={`e.g. ${sources.find((s) => s.sourceId === selectedSourceId)?.title || 'Knowledge'} ${currentMeta.label}`}
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
-              className="w-full bg-chailm-bg border border-chailm-border rounded-xl px-3 py-2 text-xs text-chailm-textMain placeholder-chailm-textMuted focus:outline-none focus:border-chailm-accentBlue font-sans"
+              className="w-full bg-[#F5F6F4] rounded-xl px-3.5 py-2 text-xs text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans"
+              style={{ border: `1px solid ${colors.hairlineStrong}` }}
             />
           </div>
 
           {currentError && (
-            <p className="text-xs text-rose-400 bg-rose-950/40 p-2.5 rounded-xl border border-rose-900 font-mono">
+            <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 font-mono" style={mono}>
               {currentError.message}
             </p>
           )}
 
           {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2 text-xs border-t border-chailm-border/60">
+          <div className="flex justify-end gap-2 pt-2 text-xs border-t" style={{ borderColor: colors.hairline }}>
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2 text-chailm-textMuted hover:text-chailm-textMain cursor-pointer disabled:opacity-40"
+              className="px-4 py-2 text-[#5C6169] hover:text-[#14171A] cursor-pointer disabled:opacity-40 font-semibold"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="px-5 py-2 bg-chailm-accentBlue/10 hover:bg-chailm-accentBlue/20 text-chailm-accentBlue font-medium rounded-full border border-chailm-accentBlue/30 transition cursor-pointer flex items-center space-x-2 disabled:opacity-50"
+              className="px-5 py-2.5 text-white font-semibold rounded-full text-xs shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer flex items-center space-x-1.5 disabled:opacity-50"
+              style={{ background: colors.verified }}
             >
               {isPending ? (
                 <>
