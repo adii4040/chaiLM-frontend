@@ -480,6 +480,7 @@ export default function WorkspacePage() {
                 formattedTimestamp: src.formattedTimestamp || '00:00:00',
                 pageNumber: src.pageNumber,
                 videoId: src.videoId,
+                autoPlay: false,
               });
               setIsRightSidebarOpen(true);
             }}

@@ -21,6 +21,7 @@ export interface ActiveMediaState {
   formattedTimestamp?: string | null;
   pageNumber?: number | null;
   cloudinaryUrl?: string | null;
+  autoPlay?: boolean;
 }
 
 interface RightPlayerSidebarProps {
@@ -54,6 +55,7 @@ export default function RightPlayerSidebar({
     pageNumber?: number | null;
     startSeconds?: number | null;
     formattedTimestamp?: string | null;
+    autoPlay?: boolean;
   }[] = (() => {
     if (selectedSourceIds.length > 0 && sources.length > 0) {
       return sources.filter((s) => selectedSourceIds.includes(s.sourceId));
@@ -73,6 +75,7 @@ export default function RightPlayerSidebar({
           pageNumber: media.pageNumber,
           startSeconds: media.startSeconds,
           formattedTimestamp: media.formattedTimestamp,
+          autoPlay: media.autoPlay,
         },
       ];
     }
@@ -194,6 +197,7 @@ export default function RightPlayerSidebar({
               ? media?.formattedTimestamp || null
               : source.formattedTimestamp || null;
             const pageNum = isMatchingMedia ? media?.pageNumber || 1 : source.pageNumber || 1;
+            const shouldAutoplay = Boolean(isMatchingMedia && media?.autoPlay);
 
             const pdfUrl =
               source.cloudinaryUrl ||
@@ -272,8 +276,8 @@ export default function RightPlayerSidebar({
                       <div className="space-y-3 pt-3">
                         <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-[#CBCFC9] shadow-md">
                           <iframe
-                            key={`${videoId}-${startSecs}`}
-                            src={`https://www.youtube.com/embed/${videoId}?start=${startSecs}&autoplay=${isMatchingMedia ? 1 : 0}&enablejsapi=1`}
+                            key={`${videoId}-${startSecs}-${shouldAutoplay}`}
+                            src={`https://www.youtube.com/embed/${videoId}?start=${startSecs}&autoplay=${shouldAutoplay ? 1 : 0}&enablejsapi=1`}
                             title={source.title}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen

@@ -140,6 +140,7 @@ export default function ChatBox({
       startSeconds: startSecs,
       formattedTimestamp: cit.formattedTimestamp || null,
       pageNumber: cit.pageNumber || null,
+      autoPlay: true,
     });
   };
 
@@ -235,6 +236,7 @@ export default function ChatBox({
                               videoId: videoId,
                               startSeconds: 0,
                               formattedTimestamp: '00:00:00',
+                              autoPlay: true,
                             })
                           }
                           className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/60 transition group-hover:scale-105 cursor-pointer"
@@ -420,6 +422,7 @@ export default function ChatBox({
                                   startSeconds: startSecs,
                                   formattedTimestamp: chunk.timestamp?.formattedTimestamp || null,
                                   pageNumber: chunk.pageNumber || null,
+                                  autoPlay: Boolean(chunk.timestamp && chunk.sourceType?.toLowerCase() === 'youtube'),
                                 })
                               }
                               className="p-3.5 rounded-2xl bg-white border hover:border-[#1F7A5C] transition-all duration-200 cursor-pointer space-y-2 group text-xs shadow-xs"

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { WorkspaceSourceItem } from '../../../modules/workspace/dto/workspaceDto';
 import { useGenerateQuiz } from '../../../modules/studio/mutation';
 import { QUERY_KEY_WORKSPACE_DATA } from '../../../modules/workspace/constants';
-import { colors, mono, serif } from '../../landing/tokens';
+import { SourceDropdown } from './SourceDropdown';
 
 export interface QuizGeneratorModalProps {
   workspaceId: string;
@@ -14,6 +14,13 @@ export interface QuizGeneratorModalProps {
   onClose: () => void;
   onSuccess: (artifact: any) => void;
 }
+
+const QUESTION_COUNT_OPTIONS = [3, 5, 10, 15, 20];
+const DIFFICULTY_OPTIONS: Array<{ value: 'easy' | 'medium' | 'hard'; label: string; desc: string }> = [
+  { value: 'easy', label: 'Easy', desc: 'Core facts & definitions' },
+  { value: 'medium', label: 'Medium', desc: 'Mechanisms & applications' },
+  { value: 'hard', label: 'Hard', desc: 'Trade-offs & synthesis' },
+];
 
 export function QuizGeneratorModal({
   workspaceId,
@@ -60,7 +67,7 @@ export function QuizGeneratorModal({
         sourceId: selectedSourceId || undefined,
         userPrompt: userPrompt.trim() || undefined,
         title: customTitle.trim() || undefined,
-        questionCount: Number(questionCount),
+        questionCount,
         difficulty,
       },
       {
@@ -83,198 +90,189 @@ export function QuizGeneratorModal({
     );
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div
-        className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative overflow-hidden"
-        style={{ border: `1px solid ${colors.hairlineStrong}` }}
-      >
-        <div className="h-1 w-full absolute top-0 left-0 right-0 bg-[#1F7A5C]" />
+  const activeSource = sources.find((s) => s.sourceId === selectedSourceId);
 
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
+      <div className="bg-white rounded-[28px] max-w-[560px] w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
+        
         {/* Header */}
-        <div className="flex justify-between items-start border-b pb-3.5" style={{ borderColor: colors.hairline }}>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs bg-[#1F7A5C] text-white">
-              <HelpCircle className="w-4 h-4" />
+        <div className="flex justify-between items-start shrink-0">
+          <div className="flex items-start space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#1F7A5C] flex items-center justify-center shrink-0">
+              <HelpCircle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-[#14171A] text-sm" style={serif}>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-snug">
                 Generate Assessment Quiz
-              </h3>
-              <p className="text-[11px] text-[#5C6169] leading-tight mt-0.5">
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
                 Create an interactive test with multiple-choice options, answers, and comprehensive explanations.
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             disabled={isPending}
-            className="text-[#93968F] hover:text-[#14171A] p-1 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40"
+            className="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
+            title="Close modal"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
-          {/* Target Source Document */}
-          {sources.length > 0 && (
-            <div className="space-y-1">
-              <label className="text-[10px] font-mono font-bold text-[#5C6169] uppercase tracking-wider" style={mono}>
-                Target Knowledge Source
-              </label>
-              <select
-                value={selectedSourceId}
-                onChange={(e) => setSelectedSourceId(e.target.value)}
-                className="w-full bg-[#F5F6F4] rounded-xl px-3 py-2 text-xs text-[#14171A] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1F7A5C]/20 cursor-pointer"
-                style={{ border: `1px solid ${colors.hairlineStrong}` }}
-              >
-                {sources.map((s) => (
-                  <option key={s.sourceId} value={s.sourceId}>
-                    {s.title} ({s.sourceType.toUpperCase()})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-1">
+          
+          {/* Custom Source Dropdown */}
+          <SourceDropdown
+            sources={sources}
+            selectedSourceId={selectedSourceId}
+            onSelect={setSelectedSourceId}
+            accentColor="emerald"
+          />
 
-          {/* Question Count */}
+          {/* Number of Questions Selector */}
           <div className="space-y-2">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-[10px] font-mono font-bold text-[#5C6169] uppercase tracking-wider" style={mono}>
-                  Number of Questions
-                </label>
-                <span className="text-[11px] font-mono font-bold text-[#1F7A5C]" style={mono}>
-                  {questionCount} Questions
-                </span>
-              </div>
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <label className="font-semibold text-gray-900">Number of questions</label>
+              <span className="bg-emerald-50 text-[#1F7A5C] px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                {questionCount} Questions
+              </span>
+            </div>
 
-              <div className="flex items-center gap-1.5">
-                {[3, 5, 10, 15, 20].map((num) => (
+            <div className="grid grid-cols-5 gap-2">
+              {QUESTION_COUNT_OPTIONS.map((count) => {
+                const isSelected = questionCount === count;
+                return (
                   <button
-                    key={num}
+                    key={count}
                     type="button"
-                    onClick={() => setQuestionCount(num)}
-                    className={`flex-1 py-1.5 rounded-xl border text-xs font-mono font-bold transition cursor-pointer ${
-                      questionCount === num
-                        ? 'bg-emerald-100 border-emerald-300 text-emerald-800 shadow-xs'
-                        : 'bg-[#F5F6F4] border-[#E2E4E1] text-[#5C6169] hover:text-[#14171A]'
+                    onClick={() => setQuestionCount(count)}
+                    className={`py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center justify-center ${
+                      isSelected
+                        ? 'bg-emerald-50 border-emerald-400 text-emerald-900 shadow-xs ring-1 ring-emerald-200'
+                        : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50/60'
                     }`}
                   >
-                    {num} Qs
+                    {count}
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Difficulty Level & Custom Input */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="space-y-1 text-xs">
-                <label className="text-[10px] font-mono text-[#5C6169] font-bold" style={mono}>
-                  Custom Count (3–25)
-                </label>
-                <input
-                  type="number"
-                  min="3"
-                  max="25"
-                  value={questionCount}
-                  onChange={(e) => setQuestionCount(Number(e.target.value))}
-                  className="w-full bg-[#F5F6F4] rounded-xl px-3 py-1.5 text-xs text-[#14171A] font-mono focus:outline-none"
-                  style={{ border: `1px solid ${colors.hairlineStrong}` }}
-                />
-              </div>
-              <div className="space-y-1 text-xs">
-                <label className="text-[10px] font-mono text-[#5C6169] font-bold" style={mono}>
-                  Difficulty Level
-                </label>
-                <select
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value as any)}
-                  className="w-full bg-[#F5F6F4] rounded-xl px-3 py-1.5 text-xs text-[#14171A] font-sans focus:outline-none cursor-pointer"
-                  style={{ border: `1px solid ${colors.hairlineStrong}` }}
-                >
-                  <option value="easy">Easy (Definitions)</option>
-                  <option value="medium">Medium (Mechanics)</option>
-                  <option value="hard">Hard (Trade-offs)</option>
-                </select>
-              </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Custom Focus Prompt */}
-          <div className="space-y-1 text-xs">
-            <label className="text-[10px] font-mono text-[#5C6169] font-bold uppercase" style={mono}>
-              Custom Focus / Prompt (Optional)
+          {/* Difficulty Level Segmented Cards */}
+          <div className="space-y-2">
+            <label className="font-semibold text-gray-900 text-xs sm:text-sm block">
+              Difficulty level
+            </label>
+
+            <div className="grid grid-cols-3 gap-2.5">
+              {DIFFICULTY_OPTIONS.map((opt) => {
+                const isSelected = difficulty === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setDifficulty(opt.value)}
+                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'border-2 border-[#1F7A5C] bg-white shadow-xs'
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
+                    }`}
+                  >
+                    <span
+                      className={`text-xs sm:text-sm font-semibold block ${
+                        isSelected ? 'text-[#1F7A5C]' : 'text-gray-900'
+                      }`}
+                    >
+                      {opt.label}
+                    </span>
+                    <span className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 block leading-tight">
+                      {opt.desc}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* User Custom Focus */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-gray-900 text-xs sm:text-sm block">
+              Custom Focus / Prompt{' '}
+              <span className="text-gray-400 font-normal text-xs">(Optional)</span>
             </label>
             <textarea
               rows={2}
               placeholder="e.g. Focus on case studies, edge cases, or specific themes..."
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}
-              className="w-full bg-[#F5F6F4] rounded-xl px-3.5 py-2 text-xs text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans resize-none"
-              style={{ border: `1px solid ${colors.hairlineStrong}` }}
+              className="w-full bg-white border border-gray-200 focus:border-[#1F7A5C] focus:ring-2 focus:ring-emerald-100 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-800 placeholder:text-gray-400 resize-none transition"
             />
           </div>
 
           {/* Optional Title */}
-          <div className="space-y-1 text-xs">
-            <label className="text-[10px] font-mono text-[#5C6169] font-bold uppercase" style={mono}>
-              Custom Title (Optional)
+          <div className="space-y-1.5">
+            <label className="font-semibold text-gray-900 text-xs sm:text-sm block">
+              Custom Title{' '}
+              <span className="text-gray-400 font-normal text-xs">(Optional)</span>
             </label>
             <input
               type="text"
-              placeholder={`e.g. ${sources.find((s) => s.sourceId === selectedSourceId)?.title || 'Knowledge'} Quiz`}
+              placeholder={`e.g. ${activeSource?.title || 'Knowledge'} Quiz`}
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
-              className="w-full bg-[#F5F6F4] rounded-xl px-3.5 py-2 text-xs text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans"
-              style={{ border: `1px solid ${colors.hairlineStrong}` }}
+              className="w-full bg-white border border-gray-200 focus:border-[#1F7A5C] focus:ring-2 focus:ring-emerald-100 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-800 placeholder:text-gray-400 transition"
             />
           </div>
 
-          {/* Background Processing Notice */}
+          {/* Processing Notice */}
           {processingNotice && (
-            <div className="p-3 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 space-y-1 animate-in fade-in duration-200">
-              <div className="flex items-center gap-2 font-bold text-xs">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-700 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 space-y-1 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm">
+                <Loader2 className="w-4 h-4 animate-spin text-amber-700 shrink-0" />
                 <span>Outline Generation in Progress</span>
               </div>
-              <p className="text-[11px] text-amber-800 leading-snug">
+              <p className="text-xs text-amber-800 leading-snug">
                 {processingNotice}
               </p>
             </div>
           )}
 
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 font-mono" style={mono}>
+            <p className="text-xs text-red-600 bg-red-50 p-3 rounded-2xl border border-red-200 font-mono">
               {error.message}
             </p>
           )}
 
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2 text-xs border-t" style={{ borderColor: colors.hairline }}>
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2 text-[#5C6169] hover:text-[#14171A] cursor-pointer disabled:opacity-40 font-semibold"
+              className="px-4 py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={isPending}
-              className="px-5 py-2.5 text-white font-semibold rounded-full text-xs shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer flex items-center space-x-1.5 disabled:opacity-50"
-              style={{ background: colors.verified }}
+              className="px-6 py-2.5 bg-[#1F7A5C] hover:bg-[#18634B] active:bg-[#13503C] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Synthesizing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-4 h-4" />
                   <span>Generate Quiz</span>
                 </>
               )}

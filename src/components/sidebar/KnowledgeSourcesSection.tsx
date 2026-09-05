@@ -103,6 +103,7 @@ export function KnowledgeSourcesSection({
                       startSeconds: src.startSeconds || 0,
                       formattedTimestamp: src.formattedTimestamp || null,
                       pageNumber: src.pageNumber || null,
+                      autoPlay: false,
                     })
                   }
                   className={`p-3 rounded-2xl border transition-all duration-200 cursor-pointer select-none relative overflow-hidden group shadow-xs hover:shadow-md hover:-translate-y-0.5 ${
