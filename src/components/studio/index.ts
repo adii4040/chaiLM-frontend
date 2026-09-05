@@ -5,3 +5,5 @@ export { default as FlashcardsView } from './FlashcardsView';
 export { default as QuizView } from './QuizView';
 export { default as MindMapView } from './MindMapView';
 export { default as AudioOverviewView } from './AudioOverviewView';
+export * from './modals';
+export * from './canvas';

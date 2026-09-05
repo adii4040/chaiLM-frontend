@@ -80,6 +80,8 @@ export interface AudioDialogueTurn {
 export interface AudioOverviewData {
   episodeTitle: string;
   summary: string;
+  podcastType?: string;
+  mood?: string;
   durationMinutesEstimate: number;
   dialogue: AudioDialogueTurn[];
 }
@@ -100,6 +102,8 @@ export interface SummaryOutlineData {
   chapters: ChapterOutline[];
 }
 
+export type StudioAudioStatus = 'pending' | 'processing' | 'ready' | 'failed' | string;
+
 export interface StudioArtifact {
   _id?: string;
   artifactId: string;
@@ -109,6 +113,9 @@ export interface StudioArtifact {
   type: StudioArtifactType;
   title: string;
   data: StudyGuideData | FlashcardDeckData | QuizData | MindMapData | AudioOverviewData | any;
+  audioUrl?: string | null;
+  audioStatus?: StudioAudioStatus;
+  audioError?: string | null;
   metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
@@ -122,7 +129,10 @@ export interface StudioArtifactsResponse {
 
 export interface StudioArtifactResponse {
   success: boolean;
-  artifact: StudioArtifact;
+  status?: string;
+  message?: string;
+  sourceId?: string;
+  artifact?: StudioArtifact;
 }
 
 export interface EnsureOutlinePayload {
@@ -139,12 +149,23 @@ export interface EnsureOutlineResponse {
   message?: string;
 }
 
+export interface AudioOverviewOptions {
+  length?: 3 | 5 | number;
+  podcastType?: string;
+  mood?: string;
+  [key: string]: any;
+}
+
 export interface GenerateArtifactBasePayload {
   workspaceId: string;
   sourceId?: string;
   userPrompt?: string;
   title?: string;
   options?: Record<string, any>;
+}
+
+export interface GenerateAudioOverviewPayload extends GenerateArtifactBasePayload {
+  options?: AudioOverviewOptions;
 }
 
 export interface GenerateFlashcardsPayload extends GenerateArtifactBasePayload {

@@ -17,5 +17,12 @@ export function useGetStudioArtifacts(
       );
     },
     enabled: Boolean(workspaceId),
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      const hasPendingAudio = data?.artifacts?.some(
+        (a) => a.audioStatus === 'processing' || a.audioStatus === 'pending'
+      );
+      return hasPendingAudio ? 3000 : false;
+    },
   });
 }

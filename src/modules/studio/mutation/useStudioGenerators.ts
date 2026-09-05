@@ -13,6 +13,7 @@ import type {
   EnsureOutlinePayload,
   EnsureOutlineResponse,
   GenerateArtifactBasePayload,
+  GenerateAudioOverviewPayload,
   GenerateFlashcardsPayload,
   GenerateQuizPayload,
   StudioArtifactResponse,
@@ -120,8 +121,8 @@ export function useGenerateAudioOverview() {
 
   return useMutation({
     mutationKey: [MUTATION_GENERATE_AUDIO_OVERVIEW],
-    mutationFn: async (payload: GenerateArtifactBasePayload) => {
-      return await apiService.post<GenerateArtifactBasePayload, StudioArtifactResponse>(
+    mutationFn: async (payload: GenerateAudioOverviewPayload) => {
+      return await apiService.post<GenerateAudioOverviewPayload, StudioArtifactResponse>(
         StudioRoutes.AUDIO_OVERVIEW,
         payload
       );

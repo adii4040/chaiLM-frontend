@@ -13,5 +13,11 @@ export function useGetStudioArtifactById(artifactId: string) {
       );
     },
     enabled: Boolean(artifactId),
+    refetchInterval: (query) => {
+      const art = query.state.data?.artifact;
+      const isPendingAudio =
+        art?.audioStatus === 'processing' || art?.audioStatus === 'pending';
+      return isPendingAudio ? 3000 : false;
+    },
   });
 }

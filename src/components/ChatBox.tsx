@@ -27,18 +27,18 @@ interface ChatBoxProps {
 const LOADING_STAGES = [
   {
     icon: Search,
-    text: 'Searching indexed workspace sources...',
-    subText: 'Scanning document excerpts & video segments',
+    text: 'Searching indexed knowledge sources...',
+    subText: 'Retrieving relevant passages and contextual evidence',
   },
   {
     icon: Database,
-    text: 'Analyzing content & extracting evidence...',
-    subText: 'Connecting findings across relevant sources',
+    text: 'Analyzing content & synthesizing evidence...',
+    subText: 'Connecting key insights across grounding sources',
   },
   {
     icon: Sparkles,
-    text: 'Formulating answer with citations...',
-    subText: 'Structuring summary & precise source references',
+    text: 'Formulating structured answer...',
+    subText: 'Generating executive summary & grounding citations',
   },
 ];
 

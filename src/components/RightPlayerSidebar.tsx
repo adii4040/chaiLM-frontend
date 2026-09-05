@@ -273,9 +273,9 @@ export default function RightPlayerSidebar({
                         <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-[#CBCFC9] shadow-md">
                           <iframe
                             key={`${videoId}-${startSecs}`}
-                            src={`https://www.youtube-nocookie.com/embed/${videoId}?start=${startSecs}&autoplay=0`}
+                            src={`https://www.youtube.com/embed/${videoId}?start=${startSecs}&autoplay=${isMatchingMedia ? 1 : 0}&enablejsapi=1`}
                             title={source.title}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
                             className="w-full h-full border-0"
                           />
@@ -297,7 +297,7 @@ export default function RightPlayerSidebar({
                           </div>
 
                           <a
-                            href={`${source.sourceUrl}&t=${startSecs}s`}
+                            href={`https://www.youtube.com/watch?v=${videoId}&t=${startSecs}s`}
                             target="_blank"
                             rel="noreferrer"
                             className="text-xs text-[#1F7A5C] hover:underline inline-flex items-center space-x-1 font-semibold"
