@@ -28,6 +28,8 @@ export interface HydratedChatMessage {
   query?: string | null;
   answer?: StructuredAnswer | null;
   sources?: SourceItem[];
+  isError?: boolean;
+  error?: string | null;
   createdAt?: string;
 }
 

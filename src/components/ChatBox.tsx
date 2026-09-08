@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, FileText, CheckCircle2, Sparkles, Clock, Database, Plus, Globe, BookOpen, Search, Loader2 } from 'lucide-react';
+import { Play, FileText, CheckCircle2, Sparkles, Clock, Database, Plus, Globe, BookOpen, Search, Loader2, AlertCircle } from 'lucide-react';
 import type { QueryResultData, AnswerCitation } from '../modules/query/dto/queryDto';
 import type { IndexResultData } from '../modules/indexer/dto/indexerDto';
 import type { ActiveMediaState } from './RightPlayerSidebar';
@@ -13,6 +13,8 @@ export interface ChatMessage {
   queryData?: QueryResultData;
   indexData?: IndexResultData;
   timestamp: string;
+  isError?: boolean;
+  error?: string;
 }
 
 interface ChatBoxProps {
@@ -273,201 +275,262 @@ export default function ChatBox({
               );
             }
 
-            if (msg.role === 'assistant' && msg.queryData) {
-              const resData = msg.queryData;
-              const overallSummary = resData.answer?.overallSummary || resData.answer?.summary || '';
-              const sections = resData.answer?.sections || [];
-              const legacySegments = resData.answer?.segments || [];
+            if (msg.role === 'assistant') {
+              if (msg.isError || msg.error) {
+                const errorText = msg.error || msg.text || 'An error occurred while querying the workspace.';
+                const isNoSources = errorText.toLowerCase().includes('no indexed sources');
 
-              return (
-                <div key={msg.id} className="space-y-5 animate-in fade-in duration-200">
-                  {/* Executive Overview Box */}
-                  {overallSummary && (
+                return (
+                  <div key={msg.id} className="flex justify-start animate-in fade-in duration-200">
                     <div
-                      className="bg-white rounded-2xl p-5 space-y-2.5 shadow-sm relative overflow-hidden"
-                      style={{ border: `1px solid ${colors.hairlineStrong}` }}
+                      className="bg-white rounded-2xl rounded-tl-none p-5 max-w-xl space-y-3 shadow-xs text-xs relative overflow-hidden border border-red-200"
                     >
-                      <div className="h-[3px] w-full bg-[#1F7A5C] absolute top-0 left-0 right-0" />
-                      <div className="text-xs font-bold text-[#1F7A5C] uppercase tracking-wider flex items-center space-x-2 pt-1" style={mono}>
-                        <Sparkles className="w-4 h-4" />
-                        <span>SYNTHESIZED EXECUTIVE SUMMARY</span>
+                      <div className="h-[3px] w-full bg-red-500 absolute top-0 left-0 right-0" />
+                      
+                      <div className="flex items-center gap-2 text-red-600 font-semibold text-xs pt-0.5" style={mono}>
+                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                        <span>GROUNDING ERROR</span>
                       </div>
-                      <p className="text-xs text-[#14171A] leading-relaxed whitespace-pre-wrap">
-                        {overallSummary}
+
+                      <p className="text-xs text-[#14171A] leading-relaxed font-medium bg-red-50/70 p-3.5 rounded-xl border border-red-100 whitespace-pre-wrap">
+                        {errorText}
                       </p>
-                    </div>
-                  )}
 
-                  {/* Section-by-Section Breakdown */}
-                  {sections.length > 0 ? (
-                    <div className="space-y-4">
-                      {sections.map((section, sIdx) => (
-                        <div
-                          key={sIdx}
-                          className="bg-white rounded-2xl p-5 space-y-3 shadow-xs"
-                          style={{ border: `1px solid ${colors.hairlineStrong}` }}
-                        >
-                          <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: colors.hairline }}>
-                            <div className="flex items-center space-x-2 text-xs font-semibold text-[#14171A]">
-                              <BookOpen className="w-3.5 h-3.5 text-[#1F7A5C]" />
-                              <span>{section.sectionTitle}</span>
-                            </div>
-                          </div>
-
-                          {section.summary && (
-                            <p className="text-xs text-[#5C6169] italic leading-relaxed">
-                              {section.summary}
-                            </p>
-                          )}
-
-                          {section.segments && section.segments.length > 0 && (
-                            <div className="space-y-2 pt-1">
-                              {section.segments.map((seg, segIdx) => (
-                                <div
-                                  key={segIdx}
-                                  className="p-3.5 rounded-xl text-xs leading-relaxed text-[#14171A]"
-                                  style={{
-                                    background: colors.surface2,
-                                    border: `1px solid ${colors.hairline}`,
-                                  }}
-                                >
-                                  <span>{seg.content}</span>
-                                  {seg.citation && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCitationClick(seg.citation!, resData.sources)}
-                                      className={`inline-flex items-center space-x-1.5 ml-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono transition-all border cursor-pointer font-bold ${
-                                        seg.citation.sourceType === 'youtube'
-                                          ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
-                                          : seg.citation.sourceType === 'pdf'
-                                          ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200'
-                                          : 'bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200'
-                                      }`}
-                                    >
-                                      {seg.citation.sourceType === 'youtube' ? (
-                                        <>
-                                          <Play className="w-2.5 h-2.5 text-red-600 fill-current" />
-                                          <span>[{seg.citation.formattedTimestamp || `${seg.citation.startSeconds}s`}]</span>
-                                        </>
-                                      ) : seg.citation.sourceType === 'pdf' ? (
-                                        <>
-                                          <FileText className="w-2.5 h-2.5 text-amber-600" />
-                                          <span>[Page {seg.citation.pageNumber || 1}]</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Globe className="w-2.5 h-2.5 text-blue-600" />
-                                          <span>[Web Source]</span>
-                                        </>
-                                      )}
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                      {isNoSources && onOpenAddSource && (
+                        <div className="pt-1">
+                          <button
+                            type="button"
+                            onClick={onOpenAddSource}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1F7A5C] text-white font-semibold text-xs hover:bg-[#18634a] transition cursor-pointer shadow-xs"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Knowledge Source</span>
+                          </button>
                         </div>
-                      ))}
+                      )}
+
+                      <span className="block text-[10px] text-[#93968F] pt-1 font-mono" style={mono}>
+                        {msg.timestamp}
+                      </span>
                     </div>
-                  ) : legacySegments.length > 0 ? (
-                    <div className="space-y-3">
-                      <div className="text-xs font-semibold text-[#5C6169] uppercase tracking-wider" style={mono}>Key Findings</div>
-                      <div className="space-y-2">
-                        {legacySegments.map((segment, idx) => (
+                  </div>
+                );
+              }
+
+              if (msg.queryData) {
+                const resData = msg.queryData;
+                const overallSummary = resData.answer?.overallSummary || resData.answer?.summary || '';
+                const sections = resData.answer?.sections || [];
+                const legacySegments = resData.answer?.segments || [];
+
+                return (
+                  <div key={msg.id} className="space-y-5 animate-in fade-in duration-200">
+                    {/* Executive Overview Box */}
+                    {overallSummary && (
+                      <div
+                        className="bg-white rounded-2xl p-5 space-y-2.5 shadow-sm relative overflow-hidden"
+                        style={{ border: `1px solid ${colors.hairlineStrong}` }}
+                      >
+                        <div className="h-[3px] w-full bg-[#1F7A5C] absolute top-0 left-0 right-0" />
+                        <div className="text-xs font-bold text-[#1F7A5C] uppercase tracking-wider flex items-center space-x-2 pt-1" style={mono}>
+                          <Sparkles className="w-4 h-4" />
+                          <span>SYNTHESIZED EXECUTIVE SUMMARY</span>
+                        </div>
+                        <p className="text-xs text-[#14171A] leading-relaxed whitespace-pre-wrap">
+                          {overallSummary}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Section-by-Section Breakdown */}
+                    {sections.length > 0 ? (
+                      <div className="space-y-4">
+                        {sections.map((section, sIdx) => (
                           <div
-                            key={idx}
-                            className="bg-white p-4 rounded-2xl text-xs leading-relaxed"
+                            key={sIdx}
+                            className="bg-white rounded-2xl p-5 space-y-3 shadow-xs"
                             style={{ border: `1px solid ${colors.hairlineStrong}` }}
                           >
-                            <span>{segment.content}</span>
-                            {segment.citation && (
-                              <button
-                                type="button"
-                                onClick={() => handleCitationClick(segment.citation!, resData.sources)}
-                                className="inline-flex items-center space-x-1.5 ml-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono transition-all border cursor-pointer bg-[#1F7A5C]/10 text-[#1F7A5C] border-[#1F7A5C]/30 hover:bg-[#1F7A5C]/20"
-                              >
-                                <span>[Citation]</span>
-                              </button>
+                            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: colors.hairline }}>
+                              <div className="flex items-center space-x-2 text-xs font-semibold text-[#14171A]">
+                                <BookOpen className="w-3.5 h-3.5 text-[#1F7A5C]" />
+                                <span>{section.sectionTitle}</span>
+                              </div>
+                            </div>
+
+                            {section.summary && (
+                              <p className="text-xs text-[#5C6169] italic leading-relaxed">
+                                {section.summary}
+                              </p>
+                            )}
+
+                            {section.segments && section.segments.length > 0 && (
+                              <div className="space-y-2 pt-1">
+                                {section.segments.map((seg, segIdx) => (
+                                  <div
+                                    key={segIdx}
+                                    className="p-3.5 rounded-xl text-xs leading-relaxed text-[#14171A]"
+                                    style={{
+                                      background: colors.surface2,
+                                      border: `1px solid ${colors.hairline}`,
+                                    }}
+                                  >
+                                    <span>{seg.content}</span>
+                                    {seg.citation && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleCitationClick(seg.citation!, resData.sources)}
+                                        className={`inline-flex items-center space-x-1.5 ml-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono transition-all border cursor-pointer font-bold ${
+                                          seg.citation.sourceType === 'youtube'
+                                            ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
+                                            : seg.citation.sourceType === 'pdf'
+                                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200'
+                                            : 'bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200'
+                                        }`}
+                                      >
+                                        {seg.citation.sourceType === 'youtube' ? (
+                                          <>
+                                            <Play className="w-2.5 h-2.5 text-red-600 fill-current" />
+                                            <span>[{seg.citation.formattedTimestamp || `${seg.citation.startSeconds}s`}]</span>
+                                          </>
+                                        ) : seg.citation.sourceType === 'pdf' ? (
+                                          <>
+                                            <FileText className="w-2.5 h-2.5 text-amber-600" />
+                                            <span>[Page {seg.citation.pageNumber || 1}]</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Globe className="w-2.5 h-2.5 text-blue-600" />
+                                            <span>[Web Source]</span>
+                                          </>
+                                        )}
+                                      </button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             )}
                           </div>
                         ))}
                       </div>
-                    </div>
-                  ) : null}
-
-                  {/* Retrieved Grounding Context Sources Grid */}
-                  {resData.sources && resData.sources.length > 0 && (
-                    <div className="pt-4 border-t space-y-3" style={{ borderColor: colors.hairline }}>
-                      <div className="text-xs font-bold text-[#5C6169] uppercase tracking-wider flex items-center space-x-1.5" style={mono}>
-                        <Database className="w-3.5 h-3.5 text-[#1F7A5C]" />
-                        <span>Retrieved Context Sources ({resData.sources.length})</span>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {resData.sources.map((chunk, idx) => {
-                          const videoId = chunk.videoId || extractYouTubeVideoId(chunk.sourceUrl);
-                          const startSecs = chunk.timestamp?.startSeconds || 0;
-                          const cloudinaryUrl = chunk.cloudinaryUrl || (chunk.sourceUrl?.startsWith('http') ? chunk.sourceUrl : null);
-
-                          return (
+                    ) : legacySegments.length > 0 ? (
+                      <div className="space-y-3">
+                        <div className="text-xs font-semibold text-[#5C6169] uppercase tracking-wider" style={mono}>Key Findings</div>
+                        <div className="space-y-2">
+                          {legacySegments.map((segment, idx) => (
                             <div
                               key={idx}
-                              onClick={() =>
-                                onMediaClick({
-                                  sourceType: chunk.sourceType,
-                                  sourceUrl: chunk.sourceUrl,
-                                  cloudinaryUrl: cloudinaryUrl,
-                                  title: chunk.title,
-                                  videoId: videoId,
-                                  startSeconds: startSecs,
-                                  formattedTimestamp: chunk.timestamp?.formattedTimestamp || null,
-                                  pageNumber: chunk.pageNumber || null,
-                                  autoPlay: Boolean(chunk.timestamp && chunk.sourceType?.toLowerCase() === 'youtube'),
-                                })
-                              }
-                              className="p-3.5 rounded-2xl bg-white border hover:border-[#1F7A5C] transition-all duration-200 cursor-pointer space-y-2 group text-xs shadow-xs"
-                              style={{ borderColor: colors.hairlineStrong }}
+                              className="bg-white p-4 rounded-2xl text-xs leading-relaxed"
+                              style={{ border: `1px solid ${colors.hairlineStrong}` }}
                             >
-                              <div className="flex items-center justify-between text-xs">
-                                <span className="font-semibold text-[#14171A] truncate max-w-[160px]">
-                                  {chunk.title}
-                                </span>
-                                {chunk.rerankScore !== undefined && (
-                                  <span
-                                    className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                                    style={{
-                                      background: colors.verifiedSoft,
-                                      color: colors.verified,
-                                      border: `1px solid ${colors.verifiedBorder}`,
-                                    }}
-                                  >
-                                    Score: {chunk.rerankScore.toFixed(3)}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-[#5C6169] line-clamp-2 leading-relaxed">
-                                "{chunk.text}"
-                              </p>
-                              {chunk.timestamp && chunk.sourceType?.toLowerCase() === 'youtube' && (
-                                <div className="text-[11px] font-semibold text-[#1F7A5C] flex items-center space-x-1 group-hover:underline pt-1">
-                                  <Clock className="w-3 h-3" />
-                                  <span>Seek to [{chunk.timestamp.formattedTimestamp}]</span>
-                                </div>
-                              )}
-                              {chunk.sourceType?.toLowerCase() === 'pdf' && chunk.pageNumber && (
-                                <div className="text-[11px] font-semibold text-[#1F7A5C] flex items-center space-x-1 group-hover:underline pt-1">
-                                  <FileText className="w-3 h-3" />
-                                  <span>View PDF Page {chunk.pageNumber}</span>
-                                </div>
+                              <span>{segment.content}</span>
+                              {segment.citation && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleCitationClick(segment.citation!, resData.sources)}
+                                  className="inline-flex items-center space-x-1.5 ml-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono transition-all border cursor-pointer bg-[#1F7A5C]/10 text-[#1F7A5C] border-[#1F7A5C]/30 hover:bg-[#1F7A5C]/20"
+                                >
+                                  <span>[Citation]</span>
+                                </button>
                               )}
                             </div>
-                          );
-                        })}
+                          ))}
+                        </div>
                       </div>
+                    ) : null}
+
+                    {/* Retrieved Grounding Context Sources Grid */}
+                    {resData.sources && resData.sources.length > 0 && (
+                      <div className="pt-4 border-t space-y-3" style={{ borderColor: colors.hairline }}>
+                        <div className="text-xs font-bold text-[#5C6169] uppercase tracking-wider flex items-center space-x-1.5" style={mono}>
+                          <Database className="w-3.5 h-3.5 text-[#1F7A5C]" />
+                          <span>Retrieved Context Sources ({resData.sources.length})</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {resData.sources.map((chunk, idx) => {
+                            const videoId = chunk.videoId || extractYouTubeVideoId(chunk.sourceUrl);
+                            const startSecs = chunk.timestamp?.startSeconds || 0;
+                            const cloudinaryUrl = chunk.cloudinaryUrl || (chunk.sourceUrl?.startsWith('http') ? chunk.sourceUrl : null);
+
+                            return (
+                              <div
+                                key={idx}
+                                onClick={() =>
+                                  onMediaClick({
+                                    sourceType: chunk.sourceType,
+                                    sourceUrl: chunk.sourceUrl,
+                                    cloudinaryUrl: cloudinaryUrl,
+                                    title: chunk.title,
+                                    videoId: videoId,
+                                    startSeconds: startSecs,
+                                    formattedTimestamp: chunk.timestamp?.formattedTimestamp || null,
+                                    pageNumber: chunk.pageNumber || null,
+                                    autoPlay: Boolean(chunk.timestamp && chunk.sourceType?.toLowerCase() === 'youtube'),
+                                  })
+                                }
+                                className="p-3.5 rounded-2xl bg-white border hover:border-[#1F7A5C] transition-all duration-200 cursor-pointer space-y-2 group text-xs shadow-xs"
+                                style={{ borderColor: colors.hairlineStrong }}
+                              >
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="font-semibold text-[#14171A] truncate max-w-[160px]">
+                                    {chunk.title}
+                                  </span>
+                                  {chunk.rerankScore !== undefined && (
+                                    <span
+                                      className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                      style={{
+                                        background: colors.verifiedSoft,
+                                        color: colors.verified,
+                                        border: `1px solid ${colors.verifiedBorder}`,
+                                      }}
+                                    >
+                                      Score: {chunk.rerankScore.toFixed(3)}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-[#5C6169] line-clamp-2 leading-relaxed">
+                                  "{chunk.text}"
+                                </p>
+                                {chunk.timestamp && chunk.sourceType?.toLowerCase() === 'youtube' && (
+                                  <div className="text-[11px] font-semibold text-[#1F7A5C] flex items-center space-x-1 group-hover:underline pt-1">
+                                    <Clock className="w-3 h-3" />
+                                    <span>Seek to [{chunk.timestamp.formattedTimestamp}]</span>
+                                  </div>
+                                )}
+                                {chunk.sourceType?.toLowerCase() === 'pdf' && chunk.pageNumber && (
+                                  <div className="text-[11px] font-semibold text-[#1F7A5C] flex items-center space-x-1 group-hover:underline pt-1">
+                                    <FileText className="w-3 h-3" />
+                                    <span>Jump to [Page {chunk.pageNumber}]</span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              if (msg.text) {
+                return (
+                  <div key={msg.id} className="flex justify-start animate-in fade-in duration-200">
+                    <div
+                      className="bg-white rounded-2xl rounded-tl-none p-5 max-w-xl space-y-2 shadow-xs text-xs"
+                      style={{ border: `1px solid ${colors.hairlineStrong}` }}
+                    >
+                      <p className="text-xs text-[#14171A] leading-relaxed whitespace-pre-wrap font-medium">
+                        {msg.text}
+                      </p>
+                      <span className="block text-[10px] text-[#93968F] pt-1 font-mono" style={mono}>
+                        {msg.timestamp}
+                      </span>
                     </div>
-                  )}
-                </div>
-              );
+                  </div>
+                );
+              }
             }
 
             return null;

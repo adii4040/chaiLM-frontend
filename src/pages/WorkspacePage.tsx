@@ -120,6 +120,16 @@ export default function WorkspacePage() {
               timestamp: timeStr,
             };
           } else {
+            if (msg.isError || msg.error) {
+              return {
+                id: msg.id,
+                role: 'assistant',
+                isError: true,
+                error: msg.error || '',
+                text: msg.error || '',
+                timestamp: timeStr,
+              };
+            }
             return {
               id: msg.id,
               role: 'assistant',
@@ -198,6 +208,20 @@ export default function WorkspacePage() {
           };
           setMessages((prev) => [...prev, assistantMsg]);
           refetchWorkspaceData();
+        },
+        onError: (err: any) => {
+          const errMsg =
+            err?.message ||
+            'Failed to process query. Please ensure knowledge sources are indexed in this workspace.';
+          const assistantErrorMsg: ChatMessage = {
+            id: `assistant-err-${Date.now()}`,
+            role: 'assistant',
+            isError: true,
+            error: errMsg,
+            text: errMsg,
+            timestamp: new Date().toLocaleTimeString(),
+          };
+          setMessages((prev) => [...prev, assistantErrorMsg]);
         },
       }
     );
