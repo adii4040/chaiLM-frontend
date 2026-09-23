@@ -139,21 +139,21 @@ export function AudioOverviewGeneratorModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="bg-white rounded-[28px] max-w-[560px] w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-6 animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl sm:rounded-[28px] max-w-[560px] w-full p-4 sm:p-8 space-y-4 sm:space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
         
         {/* Header */}
         <div className="flex justify-between items-start shrink-0">
-          <div className="flex items-start space-x-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-              <Mic className="w-6 h-6" />
+          <div className="flex items-start space-x-3 sm:space-x-3.5">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+              <Mic className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+              <h2 className="text-base sm:text-xl font-bold text-gray-900 leading-snug">
                 Generate Audio Overview
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
-                Create a realistic 2–host conversational dialogue exploring your selected source material.
+              <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 leading-relaxed">
+                Create a realistic two-host conversational dialogue exploring your selected source material.
               </p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export function AudioOverviewGeneratorModal({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
+            className="text-gray-400 hover:text-gray-700 p-1 sm:p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -170,7 +170,7 @@ export function AudioOverviewGeneratorModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-1">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-5 overflow-y-auto pr-1">
           
           {/* 1. Custom Knowledge Source Dropdown */}
           <div className="space-y-1.5" ref={dropdownRef}>
@@ -251,7 +251,7 @@ export function AudioOverviewGeneratorModal({
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
               {DURATION_OPTIONS.map((opt) => {
                 const isActive = audioLength === opt.length;
                 return (
@@ -259,14 +259,14 @@ export function AudioOverviewGeneratorModal({
                     key={opt.length}
                     type="button"
                     onClick={() => setAudioLength(opt.length)}
-                    className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                    className={`p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
                       isActive
                         ? 'border-2 border-rose-600 bg-white shadow-xs'
                         : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
                     }`}
                   >
                     {isActive && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-rose-600 absolute top-3.5 right-3.5" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-rose-600 absolute top-3 sm:top-3.5 right-3 sm:right-3.5" />
                     )}
                     <span
                       className={`text-xs sm:text-sm font-semibold ${
@@ -275,7 +275,7 @@ export function AudioOverviewGeneratorModal({
                     >
                       {opt.label}
                     </span>
-                    <span className="text-[11px] sm:text-xs text-gray-500 mt-1 leading-tight">
+                    <span className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 leading-tight">
                       {opt.sub}
                     </span>
                   </button>
@@ -285,7 +285,7 @@ export function AudioOverviewGeneratorModal({
           </div>
 
           {/* 3. Podcast format & style */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-xs sm:text-sm">
               <label className="font-semibold text-gray-900">
                 Podcast format &amp; style{' '}
@@ -294,7 +294,7 @@ export function AudioOverviewGeneratorModal({
               <span className="text-xs text-gray-400 hidden sm:inline">Choose a preset or type below</span>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {FORMAT_PRESETS.map((preset) => {
                 const isSelected = podcastType.toLowerCase() === preset.toLowerCase();
                 return (
@@ -302,7 +302,7 @@ export function AudioOverviewGeneratorModal({
                     key={preset}
                     type="button"
                     onClick={() => setPodcastType(preset)}
-                    className={`px-3 py-1.5 rounded-xl text-xs transition cursor-pointer border ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs transition cursor-pointer border ${
                       isSelected
                         ? 'bg-rose-50 border-rose-200 text-rose-700 font-medium'
                         : 'bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-700'
@@ -324,13 +324,13 @@ export function AudioOverviewGeneratorModal({
           </div>
 
           {/* 4. Vocal mood & atmosphere */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <label className="font-semibold text-gray-900 text-xs sm:text-sm block">
               Vocal mood &amp; atmosphere{' '}
               <span className="text-gray-400 font-normal text-xs">(Optional)</span>
             </label>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {MOOD_PRESETS.map((mood) => {
                 const isSelected = audioMood.toLowerCase() === mood.toLowerCase();
                 return (
@@ -338,7 +338,7 @@ export function AudioOverviewGeneratorModal({
                     key={mood}
                     type="button"
                     onClick={() => setAudioMood(mood)}
-                    className={`px-3 py-1.5 rounded-xl text-xs transition cursor-pointer border ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs transition cursor-pointer border ${
                       isSelected
                         ? 'bg-rose-50 border-rose-200 text-rose-700 font-medium'
                         : 'bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-700'
@@ -379,12 +379,12 @@ export function AudioOverviewGeneratorModal({
           )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 shrink-0">
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-100 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
             >
               Cancel
             </button>
@@ -392,7 +392,7 @@ export function AudioOverviewGeneratorModal({
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
+              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
                 <>

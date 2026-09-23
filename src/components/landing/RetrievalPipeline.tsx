@@ -115,7 +115,7 @@ const PIPELINE_STEPS: PipelineStep[] = [
     label: "Sub-Questions",
     badge: "Multi-Angle Split",
     icon: GitBranch,
-    headline: "Decomposes into 3–5 targeted vectors",
+    headline: "Decomposes into 3 to 5 targeted vectors",
     detail: "Breaks complex inquiries into distinct sub-problems, searching independently across isolated vector partitions in parallel.",
     techCode: "decompose(q) → [sub_1, sub_2, sub_3]",
     artifact: {
@@ -288,7 +288,7 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
     <section
       id="pipeline"
       ref={containerRef}
-      className="px-6 py-32 relative overflow-hidden"
+      className="px-4 sm:px-6 py-20 sm:py-32 relative overflow-hidden"
       style={{
         borderTop: `1px solid ${colors.hairline}`,
         background: "#ECEEEA",
@@ -296,15 +296,15 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
     >
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="max-w-2xl mb-24 text-left">
+        <div className="max-w-2xl mb-14 sm:mb-24 text-left">
           <SectionEyebrow>HOW IT'S VERIFIED</SectionEyebrow>
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight mb-4"
+            className="text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tight mb-3 sm:mb-4"
             style={{ ...serif, color: colors.ink }}
           >
             Every answer survives a six-stage retrieval pipeline before it reaches you.
           </h2>
-          <p className="text-base md:text-lg leading-relaxed" style={{ color: colors.slate }}>
+          <p className="text-sm sm:text-base md:text-lg leading-relaxed" style={{ color: colors.slate }}>
             A scroll-driven multi-angle pipeline ensuring zero hallucinations through structured verification, reciprocal rank fusion, and cross-encoder reranking.
           </p>
         </div>
@@ -342,7 +342,7 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
           </div>
 
           {/* Left Curving Spine (Mobile/Tablet) */}
-          <div className="lg:hidden absolute left-4 top-0 bottom-0 w-8 pointer-events-none z-0">
+          <div className="lg:hidden absolute left-2 sm:left-4 top-0 bottom-0 w-6 sm:w-8 pointer-events-none z-0">
             <svg
               className="w-full h-full"
               viewBox="0 0 32 2150"
@@ -368,7 +368,7 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
           </div>
 
           {/* 6 Step Rows (Card on one side, Live Inspector on the other) */}
-          <div className="space-y-20 lg:space-y-28 relative z-10">
+          <div className="space-y-12 sm:space-y-20 lg:space-y-28 relative z-10">
             {PIPELINE_STEPS.map((step, i) => {
               const isEven = i % 2 === 0;
               const Icon = step.icon;
@@ -376,7 +376,7 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
               return (
                 <div
                   key={step.n}
-                  className="relative flex flex-col lg:flex-row items-stretch lg:items-center gap-6 lg:gap-14"
+                  className="relative flex flex-col lg:flex-row items-stretch lg:items-center gap-4 sm:gap-6 lg:gap-14"
                 >
                   {/* Central Node Badge (Desktop) */}
                   <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 items-center justify-center">
@@ -400,7 +400,7 @@ export function RetrievalPipeline({ reducedMotion }: { reducedMotion: boolean })
                   </div>
 
                   {/* Left Column (Card if isEven, Inspector if !isEven) */}
-                  <div className={`w-full lg:w-1/2 pl-12 lg:pl-0 ${isEven ? "order-1" : "order-2 lg:order-1"}`}>
+                  <div className={`w-full lg:w-1/2 pl-7 sm:pl-10 lg:pl-0 ${isEven ? "order-1" : "order-2 lg:order-1"}`}>
                     {isEven ? (
                       /* Concept Card (Left side) */
                       <motion.div

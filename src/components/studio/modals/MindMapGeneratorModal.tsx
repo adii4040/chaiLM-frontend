@@ -80,20 +80,20 @@ export function MindMapGeneratorModal({
   const activeSource = sources.find((s) => s.sourceId === selectedSourceId);
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="bg-white rounded-[28px] max-w-[560px] w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-6 animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl sm:rounded-[28px] max-w-[560px] w-full p-4 sm:p-8 space-y-4 sm:space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
         
         {/* Header */}
         <div className="flex justify-between items-start shrink-0">
-          <div className="flex items-start space-x-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <Network className="w-6 h-6" />
+          <div className="flex items-start space-x-3 sm:space-x-3.5">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <Network className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+              <h2 className="text-base sm:text-xl font-bold text-gray-900 leading-snug">
                 Generate Mind Map
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 leading-relaxed">
                 Build an expandable multi-level conceptual tree mapping all sections of your source document.
               </p>
             </div>
@@ -103,7 +103,7 @@ export function MindMapGeneratorModal({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
+            className="text-gray-400 hover:text-gray-700 p-1 sm:p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -111,7 +111,7 @@ export function MindMapGeneratorModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-1">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-5 overflow-y-auto pr-1">
           
           {/* Custom Source Dropdown */}
           <SourceDropdown
@@ -171,12 +171,12 @@ export function MindMapGeneratorModal({
           )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 shrink-0">
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-100 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
             >
               Cancel
             </button>
@@ -184,7 +184,7 @@ export function MindMapGeneratorModal({
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
+              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
                 <>
@@ -194,7 +194,7 @@ export function MindMapGeneratorModal({
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Generate Mind Map</span>
+                  <span>Generate Map</span>
                 </>
               )}
             </button>

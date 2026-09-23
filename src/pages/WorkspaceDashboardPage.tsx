@@ -91,7 +91,7 @@ export default function WorkspaceDashboardPage() {
       <DashboardHeader onOpenCreateModal={() => setIsCreateModalOpen(true)} />
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-10 space-y-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
         {/* HERO BAR & STATS */}
         <DashboardHero totalCount={sessions.length} />
 
@@ -109,7 +109,7 @@ export default function WorkspaceDashboardPage() {
             Loading workspaces...
           </div>
         ) : filteredSessions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredSessions.map((session) => (
               <WorkspaceCard
                 key={session.workspaceId || session.sessionId}
@@ -122,16 +122,16 @@ export default function WorkspaceDashboardPage() {
             {/* Create New Workspace Card at the end of grid */}
             <div
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-white/60 hover:bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[240px]"
+              className="bg-white/60 hover:bg-white rounded-2xl p-5 sm:p-6 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[220px] sm:min-h-[240px]"
               style={{
                 border: `2px dashed ${colors.hairlineStrong}`,
               }}
             >
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[#1F7A5C] shadow-xs"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[#1F7A5C] shadow-xs"
                 style={{ background: colors.verifiedSoft }}
               >
-                <FolderOpen className="w-6 h-6 text-[#1F7A5C] group-hover:text-white transition-colors duration-200" />
+                <FolderOpen className="w-5 h-5 sm:w-6 sm:h-6 text-[#1F7A5C] group-hover:text-white transition-colors duration-200" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-semibold text-[#14171A] group-hover:text-[#1F7A5C] transition-colors">
@@ -151,14 +151,14 @@ export default function WorkspaceDashboardPage() {
         ) : (
           /* Empty Search State */
           <div
-            className="bg-white rounded-3xl p-12 text-center space-y-4 max-w-md mx-auto my-12 shadow-sm"
+            className="bg-white rounded-3xl p-6 sm:p-12 text-center space-y-4 max-w-md mx-auto my-8 sm:my-12 shadow-sm"
             style={{ border: `1px solid ${colors.hairlineStrong}` }}
           >
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center mx-auto"
               style={{ background: colors.verifiedSoft, color: colors.verified }}
             >
-              <FolderOpen className="w-7 h-7" />
+              <FolderOpen className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <div className="space-y-1.5">
               <h3 className="text-base font-semibold text-[#14171A]">No workspaces found</h3>

@@ -61,7 +61,7 @@ export const STUDIO_ITEMS: StudioItem[] = [
     meta: "~18 min · 24 exchanges",
     preview: {
       dialogue: [
-        { speaker: "Host A", tone: "enthusiastic", text: "This source makes a pretty bold claim right out of the gate — let's unpack it." },
+        { speaker: "Host A", tone: "enthusiastic", text: "This source makes a pretty bold claim right out of the gate, so let's unpack it." },
         { speaker: "Host B", tone: "analytical", text: "Right, and the supporting evidence actually holds up when you dig into it." },
       ],
     },
@@ -105,7 +105,7 @@ export const STUDIO_ITEMS: StudioItem[] = [
     difficulty: null,
     meta: "6 key themes",
     preview: {
-      summary: "An organized breakdown of every major theme, argument, and supporting formula from your source — ready to review before an exam.",
+      summary: "An organized breakdown of every major theme, argument, and supporting formula from your source, ready to review before an exam.",
       takeaway: "The primary computational bottleneck shifts from matrix multiplications to memory transfers.",
       glossary: { term: "KV-Cache", def: "Key-Value tensor buffer stored in GPU VRAM for fast auto-regressive decoding." },
     },
@@ -310,7 +310,7 @@ export function StudioCoverflow({ reducedMotion }: { reducedMotion: boolean }) {
               }}
               transition={{ duration: reducedMotion ? 0.2 : 0.7, ease: EASE }}
               style={{
-                width: 340,
+                width: "min(340px, calc(100vw - 32px))",
                 height: 420,
                 zIndex: 100 - abs,
                 pointerEvents: abs > 2 ? "none" : "auto",
@@ -347,7 +347,7 @@ export function StudioSection({ reducedMotion }: { reducedMotion: boolean }) {
           One verified source, five ways to master it.
         </h2>
         <p className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed" style={{ color: colors.slate }}>
-          Transform your grounded sources into multi-format learning artifacts — from interactive quizzes and flashcards to structured study guides and two-host audio overviews.
+          Transform your grounded sources into multi-format learning artifacts, from interactive quizzes and flashcards to structured study guides and two-host audio overviews.
         </p>
       </div>
 

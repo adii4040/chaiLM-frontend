@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { WorkspaceSourceItem } from '../modules/workspace/dto/workspaceDto';
 import { colors, mono } from './landing/tokens';
+import { formatSourceTitle } from '../utils/helpers';
 
 export interface ActiveMediaState {
   sourceType: string;
@@ -119,11 +120,19 @@ export default function RightPlayerSidebar({
   };
 
   return (
-    <aside
-      className="w-96 md:w-[460px] bg-white flex flex-col h-full shrink-0 shadow-2xl z-40 transition-all duration-300 animate-in slide-in-from-right duration-200"
-      style={{ borderLeft: `1px solid ${colors.hairline}` }}
-    >
-      {/* Header Bar */}
+    <>
+      {/* Mobile Drawer Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden animate-in fade-in duration-200"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      <aside
+        className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md lg:static lg:w-96 xl:w-[460px] bg-white flex flex-col h-full shrink-0 shadow-2xl lg:shadow-none transition-all duration-300 animate-in slide-in-from-right duration-200"
+        style={{ borderLeft: `1px solid ${colors.hairline}` }}
+      >
+        {/* Header Bar */}
       <div className="p-3.5 border-b flex items-center justify-between gap-2 shrink-0 bg-white" style={{ borderColor: colors.hairline }}>
         <div className="flex items-center space-x-2">
           <div
@@ -235,7 +244,7 @@ export default function RightPlayerSidebar({
 
                     <div className="min-w-0">
                       <h3 className="text-xs font-semibold text-[#14171A] truncate group-hover:text-[#1F7A5C] transition">
-                        {source.title}
+                        {formatSourceTitle(source.title, source.sourceUrl, source.sourceType)}
                       </h3>
                       <span className="text-[10px] font-mono text-[#5C6169] uppercase font-bold" style={mono}>
                         {source.sourceType}
@@ -391,5 +400,6 @@ export default function RightPlayerSidebar({
         )}
       </div>
     </aside>
+    </>
   );
 }

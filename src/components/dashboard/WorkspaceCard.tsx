@@ -2,6 +2,7 @@ import React from 'react';
 import { Trash2, Video, Globe, FileText, Clock, ArrowRight } from 'lucide-react';
 import type { WorkspaceSummaryItem } from '../../modules/workspace/dto/workspaceDto';
 import { colors, mono, spotlightMove } from '../landing/tokens';
+import { formatSourceTitle } from '../../utils/helpers';
 
 interface WorkspaceCardProps {
   session: WorkspaceSummaryItem;
@@ -33,7 +34,7 @@ export default function WorkspaceCard({
     <div
       onClick={() => onOpenWorkspace(id)}
       onMouseMove={spotlightMove}
-      className="bg-white rounded-2xl p-6 flex flex-col justify-between space-y-4 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden spotlight-card"
+      className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col justify-between space-y-4 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden spotlight-card"
       style={{
         border: `1px solid ${colors.hairlineStrong}`,
         boxShadow: '0 4px 18px -6px rgba(20,23,26,0.06)',
@@ -43,9 +44,9 @@ export default function WorkspaceCard({
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#1F7A5C] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
       {/* Top Card Header */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <div className="flex items-start justify-between space-x-2">
-          <h3 className="text-base font-semibold text-[#14171A] group-hover:text-[#1E2A5E] transition-colors line-clamp-1">
+          <h3 className="text-sm sm:text-base font-semibold text-[#14171A] group-hover:text-[#1E2A5E] transition-colors line-clamp-1">
             {session.title}
           </h3>
 
@@ -53,23 +54,23 @@ export default function WorkspaceCard({
           <button
             onClick={(e) => onDeleteWorkspace(id, session.title, e)}
             title="Delete Workspace"
-            className="text-[#93968F] hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer shrink-0"
+            className="text-[#93968F] hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 cursor-pointer shrink-0"
           >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
 
         <div className="flex items-center space-x-2 text-[10px] text-[#93968F]" style={mono}>
-          <span>ID: {id.length > 22 ? `${id.substring(0, 20)}...` : id}</span>
+          <span>ID: {id.length > 20 ? `${id.substring(0, 18)}...` : id}</span>
         </div>
       </div>
 
       {/* Sources Summary List */}
       <div className="space-y-2.5 pt-3 border-t" style={{ borderColor: colors.hairline }}>
         <div className="flex items-center justify-between text-xs">
-          <span className="text-[#5C6169] font-medium">Indexed Sources</span>
+          <span className="text-[#5C6169] font-medium text-[11px] sm:text-xs">Indexed Sources</span>
           <span
-            className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+            className="text-[10px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-full"
             style={{
               ...mono,
               background: colors.verifiedSoft,
@@ -82,7 +83,7 @@ export default function WorkspaceCard({
         </div>
 
         {session.sourcesSummary && session.sourcesSummary.length > 0 ? (
-          <div className="space-y-1.5 max-h-28 overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-24 sm:max-h-28 overflow-y-auto pr-1">
             {session.sourcesSummary.map((src, idx) => (
               <div
                 key={src.sourceId || idx}
@@ -99,8 +100,8 @@ export default function WorkspaceCard({
                 ) : (
                   <FileText className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 )}
-                <span className="text-[#14171A] truncate text-xs font-medium">
-                  {src.title}
+                <span className="text-[#14171A] truncate text-[11px] sm:text-xs font-medium">
+                  {formatSourceTitle(src.title, src.sourceUrl, src.sourceType)}
                 </span>
               </div>
             ))}
@@ -113,15 +114,15 @@ export default function WorkspaceCard({
       </div>
 
       {/* Card Footer Metadata */}
-      <div className="pt-3 border-t flex items-center justify-between text-xs text-[#5C6169]" style={{ borderColor: colors.hairline }}>
-        <span className="flex items-center space-x-1.5 text-[11px]">
-          <Clock className="w-3.5 h-3.5 text-[#93968F]" />
+      <div className="pt-3 border-t flex items-center justify-between text-xs text-[#5C6169] gap-2" style={{ borderColor: colors.hairline }}>
+        <span className="flex items-center space-x-1.5 text-[10px] sm:text-[11px] truncate">
+          <Clock className="w-3 h-3 text-[#93968F] shrink-0" />
           <span>Updated {formatRelativeTime(session.updatedAt)}</span>
         </span>
 
-        <span className="text-[#1F7A5C] group-hover:translate-x-1 transition-transform flex items-center space-x-1 font-semibold text-xs">
-          <span>Open Workspace</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+        <span className="text-[#1F7A5C] group-hover:translate-x-1 transition-transform flex items-center space-x-1 font-semibold text-[11px] sm:text-xs shrink-0">
+          <span>Open</span>
+          <ArrowRight className="w-3 h-3" />
         </span>
       </div>
     </div>

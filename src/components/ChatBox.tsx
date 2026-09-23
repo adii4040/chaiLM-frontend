@@ -3,7 +3,7 @@ import { Play, FileText, CheckCircle2, Sparkles, Clock, Database, Plus, Globe, B
 import type { QueryResultData, AnswerCitation } from '../modules/query/dto/queryDto';
 import type { IndexResultData } from '../modules/indexer/dto/indexerDto';
 import type { ActiveMediaState } from './RightPlayerSidebar';
-import { extractYouTubeVideoId } from '../utils/helpers';
+import { extractYouTubeVideoId, formatSourceTitle } from '../utils/helpers';
 import { colors, mono, serif } from './landing/tokens';
 
 export interface ChatMessage {
@@ -156,17 +156,17 @@ export default function ChatBox({
       {/* Messages Stream Container */}
       <div
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-6 md:p-8 space-y-7 max-w-4xl mx-auto w-full scroll-smooth"
+        className="flex-1 overflow-y-auto p-3.5 sm:p-6 md:p-8 space-y-4 sm:space-y-7 max-w-4xl mx-auto w-full scroll-smooth"
       >
         {/* Header Welcome Prompt */}
-        <div className="border-b pb-5 space-y-1.5" style={{ borderColor: colors.hairline }}>
+        <div className="border-b pb-4 sm:pb-5 space-y-1 sm:space-y-1.5" style={{ borderColor: colors.hairline }}>
           <h1
-            className="text-2xl md:text-3xl font-medium tracking-tight text-[#14171A]"
+            className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-[#14171A]"
             style={serif}
           >
             {sessionTitle}
           </h1>
-          <p className="text-xs text-[#5C6169] leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-[#5C6169] leading-relaxed">
             Query across active YouTube videos, PDF documents, and web articles with source-grounded citations.
           </p>
         </div>
@@ -251,7 +251,9 @@ export default function ChatBox({
                     )}
 
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-[#14171A] text-sm">{data.title || 'Knowledge Source'}</h4>
+                      <h4 className="font-semibold text-[#14171A] text-sm">
+                        {formatSourceTitle(data.title, data.sourceUrl, data.type)}
+                      </h4>
                       <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#5C6169]" style={mono}>
                         <span
                           className="px-2 py-0.5 rounded-full uppercase font-bold"
@@ -474,7 +476,7 @@ export default function ChatBox({
                               >
                                 <div className="flex items-center justify-between text-xs">
                                   <span className="font-semibold text-[#14171A] truncate max-w-[160px]">
-                                    {chunk.title}
+                                    {formatSourceTitle(chunk.title, chunk.sourceUrl, chunk.sourceType)}
                                   </span>
                                   {chunk.rerankScore !== undefined && (
                                     <span
@@ -584,10 +586,10 @@ export default function ChatBox({
       </div>
 
       {/* Input Bar */}
-      <div className="p-6 shrink-0" style={{ background: colors.paper }}>
+      <div className="p-3 sm:p-6 shrink-0" style={{ background: colors.paper }}>
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
           <div
-            className="bg-white rounded-3xl p-3 shadow-md relative overflow-hidden space-y-2 transition-all"
+            className="bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 shadow-md relative overflow-hidden space-y-1.5 sm:space-y-2 transition-all"
             style={{
               border: `1px solid ${isQuerying ? colors.verified : colors.hairlineStrong}`,
             }}
@@ -604,20 +606,20 @@ export default function ChatBox({
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder={isQuerying ? "Synthesizing answer..." : "Ask a question about your active workspace content..."}
+              placeholder={isQuerying ? "Synthesizing answer..." : "Ask a question about your active workspace..."}
               disabled={isQuerying}
-              className="w-full px-4 pt-3 pb-1 bg-transparent border-none text-xs md:text-sm text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans disabled:opacity-60"
+              className="w-full px-2.5 sm:px-4 pt-2.5 sm:pt-3 pb-1 bg-transparent border-none text-xs sm:text-sm text-[#14171A] placeholder:text-[#93968F] focus:outline-none font-sans disabled:opacity-60"
             />
 
             {/* Bottom Action Controls Inside Input Bar */}
-            <div className="flex items-center justify-between px-3 pb-1">
-              <div className="flex items-center space-x-2 text-xs">
+            <div className="flex items-center justify-between px-1.5 sm:px-3 pb-0.5 sm:pb-1 gap-2">
+              <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs min-w-0">
                 {onOpenAddSource && (
                   <button
                     type="button"
                     onClick={onOpenAddSource}
                     disabled={isQuerying}
-                    className="p-2 bg-[#F5F6F4] hover:bg-[#E2E4E1] text-[#5C6169] hover:text-[#14171A] rounded-full border border-[#CBCFC9] flex items-center justify-center cursor-pointer disabled:opacity-40 transition-all shadow-2xs"
+                    className="p-1.5 sm:p-2 bg-[#F5F6F4] hover:bg-[#E2E4E1] text-[#5C6169] hover:text-[#14171A] rounded-full border border-[#CBCFC9] flex items-center justify-center cursor-pointer disabled:opacity-40 transition-all shadow-2xs shrink-0"
                     title="Add Knowledge Source"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -625,7 +627,7 @@ export default function ChatBox({
                 )}
                 {isQuerying && (
                   <div
-                    className="flex items-center space-x-1.5 text-[11px] font-mono px-3 py-1 rounded-full"
+                    className="flex items-center space-x-1.5 text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full shrink-0"
                     style={{
                       ...mono,
                       background: colors.verifiedSoft,
@@ -642,11 +644,11 @@ export default function ChatBox({
               <button
                 type="submit"
                 disabled={!inputText.trim() || isQuerying}
-                className="px-4 py-2 bg-[#F5F6F4] hover:bg-[#E2E4E1] disabled:opacity-40 text-[#14171A] rounded-full text-xs font-medium border border-[#CBCFC9] flex items-center space-x-1.5 transition-all cursor-pointer shadow-2xs"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#F5F6F4] hover:bg-[#E2E4E1] disabled:opacity-40 text-[#14171A] rounded-full text-xs font-medium border border-[#CBCFC9] flex items-center space-x-1.5 transition-all cursor-pointer shadow-2xs shrink-0"
               >
                 <span>{isQuerying ? 'Analyzing...' : 'Run Query'}</span>
                 <kbd
-                  className="text-[10px] text-[#5C6169] px-1.5 py-0.5 rounded-md font-mono"
+                  className="hidden sm:inline-block text-[10px] text-[#5C6169] px-1.5 py-0.5 rounded-md font-mono"
                   style={{ ...mono, background: '#FFFFFF', border: `1px solid ${colors.hairline}` }}
                 >
                   ↵

@@ -10,6 +10,7 @@ import {
 import type { WorkspaceSourceItem } from '../../modules/workspace/dto/workspaceDto';
 import type { ActiveMediaState } from '../RightPlayerSidebar';
 import { colors, mono } from '../landing/tokens';
+import { formatSourceTitle } from '../../utils/helpers';
 
 export interface KnowledgeSourcesSectionProps {
   sources: WorkspaceSourceItem[];
@@ -133,7 +134,7 @@ export function KnowledgeSourcesSection({
                         </div>
                       )}
                       <span className="text-xs font-bold text-[#14171A] truncate group-hover:text-[#1F7A5C] transition-colors">
-                        {src.title}
+                        {formatSourceTitle(src.title, src.sourceUrl, src.sourceType)}
                       </span>
                     </div>
 

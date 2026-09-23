@@ -15,9 +15,9 @@ export default function DashboardControls({
   onSortChange,
 }: DashboardControlsProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
       {/* Search Bar Input */}
-      <div className="relative w-full sm:w-96">
+      <div className="relative w-full sm:w-80 md:w-96">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#93968F]" />
         <input
           type="text"
@@ -38,14 +38,14 @@ export default function DashboardControls({
       </div>
 
       {/* Sort By Dropdown */}
-      <div className="flex items-center space-x-2 text-xs text-[#5C6169] w-full sm:w-auto justify-end">
-        <span style={mono} className="font-semibold text-[11px] uppercase tracking-wider">
+      <div className="flex items-center justify-between sm:justify-end space-x-2 text-xs text-[#5C6169] w-full sm:w-auto">
+        <span style={mono} className="font-semibold text-[10px] sm:text-[11px] uppercase tracking-wider shrink-0">
           Sort by:
         </span>
         <select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as 'updatedAt' | 'sources' | 'title')}
-          className="bg-white rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F7A5C]/20 text-xs text-[#14171A] font-medium cursor-pointer shadow-xs"
+          className="flex-1 sm:flex-initial bg-white rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F7A5C]/20 text-xs text-[#14171A] font-medium cursor-pointer shadow-xs"
           style={{ border: `1px solid ${colors.hairlineStrong}` }}
         >
           <option value="updatedAt">Recently Updated</option>

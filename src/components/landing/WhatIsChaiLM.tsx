@@ -15,7 +15,7 @@ const FEATURES = [
   {
     icon: Layers,
     title: "One workspace, every format",
-    desc: "PDFs, YouTube lectures, and web articles live side by side in a single research workspace — no switching tools to cross-reference a claim.",
+    desc: "PDFs, YouTube lectures, and web articles live side by side in a single research workspace, so you never need to switch tools to cross-reference a claim.",
   },
   {
     icon: ShieldCheck,
@@ -25,7 +25,7 @@ const FEATURES = [
   {
     icon: Sparkles,
     title: "Beyond a single answer",
-    desc: "The same grounded source material can become a study guide, a quiz, a mind map, or a two-host audio overview — on demand, in the Studio.",
+    desc: "The same grounded source material can become a study guide, a quiz, a mind map, or a two-host audio overview on demand in the Studio.",
   },
 ];
 
@@ -92,7 +92,7 @@ export function WhatIsChaiLM({ reducedMotion }: { reducedMotion: boolean }) {
             The autonomous multi-modal research &amp; knowledge engine.
           </h2>
           <p className="text-base md:text-lg leading-relaxed" style={{ color: colors.slate }}>
-            ChaiLM reads your sources so you don't have to guess — it ingests documents, video, and the web into a single citation-grounded workspace, built for research, coursework, and professional review alike.
+            ChaiLM reads your sources so you don't have to guess. It ingests documents, video, and the web into a single citation-grounded workspace, built for research, coursework, and professional review alike.
           </p>
         </motion.div>
 

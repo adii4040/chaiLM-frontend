@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useRef } from "react";
 
 /* ------------------------------------------------------------------ */
-/* Design tokens — "Exhibit": light, ledger/paper, restrained color   */
+/* Design tokens: "Exhibit" light, ledger/paper, restrained color     */
 /* ------------------------------------------------------------------ */
 export const colors = {
   paper: "#F5F6F4",

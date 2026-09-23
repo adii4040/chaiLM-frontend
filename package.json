@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^3.1.1",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5.101.4",
+    "@xyflow/react": "^12.11.6",
     "axios": "^1.18.1",
     "formik": "^2.4.9",
     "framer-motion": "^13.1.1",
@@ -22,6 +24,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@types/dagre": "^0.7.54",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

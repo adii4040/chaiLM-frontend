@@ -267,10 +267,10 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto flex flex-col justify-between items-center space-y-6 pb-12 animate-in fade-in duration-300 select-none">
+    <div className="max-w-3xl mx-auto flex flex-col justify-between items-center space-y-4 sm:space-y-6 pb-8 sm:pb-12 animate-in fade-in duration-300 select-none px-1 sm:px-0">
       
       {/* Top Header Metrics & Progress Bar */}
-      <header className="w-full space-y-3">
+      <header className="w-full space-y-2.5 sm:space-y-3">
         <div className="flex items-center justify-between text-xs sm:text-sm font-semibold text-gray-800">
           {/* Active Card Tracker */}
           <div className="flex items-center gap-2">
@@ -319,7 +319,7 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
             {/* 3D Flipper Box */}
             <div
               ref={flipperRef}
-              className="relative w-full min-h-[360px] sm:min-h-[400px] rounded-[28px] shadow-[0_20px_50px_-15px_rgba(20,25,30,0.12)] hover:shadow-[0_28px_65px_-12px_rgba(20,25,30,0.18)] transition-shadow duration-300"
+              className="relative w-full min-h-[320px] sm:min-h-[400px] rounded-[24px] sm:rounded-[28px] shadow-[0_20px_50px_-15px_rgba(20,25,30,0.12)] hover:shadow-[0_28px_65px_-12px_rgba(20,25,30,0.18)] transition-shadow duration-300"
               style={{
                 transformStyle: 'preserve-3d',
                 transition: 'transform 0.65s cubic-bezier(0.34, 1.25, 0.64, 1)',
@@ -328,7 +328,7 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
             >
               {/* ================= FRONT SIDE (QUESTION / PROMPT) ================= */}
               <div
-                className="absolute inset-0 bg-white rounded-[28px] border border-gray-200/90 overflow-hidden flex flex-col justify-between shadow-xs"
+                className="absolute inset-0 bg-white rounded-[24px] sm:rounded-[28px] border border-gray-200/90 overflow-hidden flex flex-col justify-between shadow-xs"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -348,18 +348,18 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                 />
 
                 {/* Card Inner Content */}
-                <div className="p-6 sm:p-9 flex flex-col justify-between h-full z-10">
+                <div className="p-5 sm:p-9 flex flex-col justify-between h-full z-10">
                   {/* Header Row */}
                   <div className="flex items-center justify-between gap-3">
                     <div className="inline-flex items-center gap-2 text-amber-700 font-bold tracking-wider text-xs uppercase" style={mono}>
                       <span className="p-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 shadow-2xs">
-                        <Sparkles className="w-4 h-4" />
+                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </span>
-                      <span>QUESTION / PROMPT</span>
+                      <span className="text-[11px] sm:text-xs">QUESTION / PROMPT</span>
                     </div>
 
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                      className={`inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
                         difficultyBadges[currentCard.difficulty] || difficultyBadges.medium
                       }`}
                       style={mono}
@@ -369,22 +369,22 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                   </div>
 
                   {/* Central Question */}
-                  <div className="my-auto py-6 text-center sm:text-left">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug tracking-tight">
+                  <div className="my-auto py-4 sm:py-6 text-center sm:text-left">
+                    <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug tracking-tight">
                       {currentCard.front}
                     </h2>
                   </div>
 
                   {/* Card Bottom Row */}
-                  <div className="pt-4 border-t border-gray-100 flex items-center justify-between gap-3 text-xs">
+                  <div className="pt-3 sm:pt-4 border-t border-gray-100 flex items-center justify-between gap-2 text-xs">
                     {/* Show Hint Button */}
                     {currentCard.hint ? (
                       <button
                         type="button"
                         onClick={toggleHint}
-                        className="interactive-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-600 hover:text-amber-800 hover:bg-amber-50/80 border border-transparent hover:border-amber-200/80 transition shadow-2xs cursor-pointer"
+                        className="interactive-btn inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-gray-600 hover:text-amber-800 hover:bg-amber-50/80 border border-transparent hover:border-amber-200/80 transition shadow-2xs cursor-pointer text-xs"
                       >
-                        <Lightbulb className="w-4 h-4 text-amber-500" />
+                        <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
                         <span className="font-mono font-semibold" style={mono}>
                           {isHintVisible ? 'Hide Hint' : 'Show Hint'}
                         </span>
@@ -393,8 +393,8 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                       <div />
                     )}
 
-                    <div className="flex items-center gap-1.5 font-mono text-gray-400 text-xs" style={mono}>
-                      <span>Click card or Press Space to flip</span>
+                    <div className="flex items-center gap-1.5 font-mono text-gray-400 text-[11px] sm:text-xs text-right" style={mono}>
+                      <span>Tap to flip</span>
                     </div>
                   </div>
                 </div>
@@ -403,11 +403,11 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                 {isHintVisible && currentCard.hint && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute inset-x-0 bottom-16 mx-6 sm:mx-9 bg-amber-50/95 backdrop-blur-sm border border-amber-200 rounded-2xl p-4 shadow-lg z-30 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200"
+                    className="absolute inset-x-0 bottom-14 sm:bottom-16 mx-4 sm:mx-9 bg-amber-50/95 backdrop-blur-sm border border-amber-200 rounded-2xl p-3.5 sm:p-4 shadow-lg z-30 flex items-start gap-2.5 sm:gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200"
                   >
-                    <span className="text-amber-600 text-lg">💡</span>
+                    <span className="text-amber-600 text-base sm:text-lg">💡</span>
                     <div className="text-xs sm:text-sm text-amber-950 leading-relaxed min-w-0">
-                      <strong className="font-bold block mb-0.5 font-mono text-xs" style={mono}>
+                      <strong className="font-bold block mb-0.5 font-mono text-[11px] sm:text-xs" style={mono}>
                         Clue:
                       </strong>
                       <span className="text-amber-900">{currentCard.hint}</span>
@@ -425,7 +425,7 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
 
               {/* ================= BACK SIDE (ANSWER & CITATION) ================= */}
               <div
-                className="absolute inset-0 bg-white rounded-[28px] border border-gray-200/90 overflow-hidden flex flex-col justify-between shadow-xs"
+                className="absolute inset-0 bg-white rounded-[24px] sm:rounded-[28px] border border-gray-200/90 overflow-hidden flex flex-col justify-between shadow-xs"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -446,18 +446,18 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                 />
 
                 {/* Card Inner Content */}
-                <div className="p-6 sm:p-9 flex flex-col justify-between h-full z-10">
+                <div className="p-5 sm:p-9 flex flex-col justify-between h-full z-10">
                   {/* Header Row */}
                   <div className="flex items-center justify-between gap-3">
                     <div className="inline-flex items-center gap-2 text-emerald-700 font-bold tracking-wider text-xs uppercase" style={mono}>
                       <span className="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 shadow-2xs">
-                        <Check className="w-4 h-4 stroke-[2.5]" />
+                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                       </span>
-                      <span>ANSWER</span>
+                      <span className="text-[11px] sm:text-xs">ANSWER</span>
                     </div>
 
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                      className={`inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
                         difficultyBadges[currentCard.difficulty] || difficultyBadges.medium
                       }`}
                       style={mono}
@@ -467,35 +467,35 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
                   </div>
 
                   {/* Central Answer & Citation */}
-                  <div className="my-auto py-6 text-center sm:text-left flex flex-col items-center sm:items-start gap-4">
-                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug tracking-tight">
+                  <div className="my-auto py-4 sm:py-6 text-center sm:text-left flex flex-col items-center sm:items-start gap-3 sm:gap-4">
+                    <p className="text-base sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug tracking-tight">
                       {currentCard.back}
                     </p>
 
                     {currentCard.sourceReference && (
-                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-gray-600 font-mono text-xs font-medium tracking-wide shadow-2xs" style={mono}>
-                        <Clock className="w-3.5 h-3.5 text-gray-400" />
-                        <span>Citation: {currentCard.sourceReference}</span>
+                      <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-gray-100 border border-gray-200 text-gray-600 font-mono text-[11px] sm:text-xs font-medium tracking-wide shadow-2xs max-w-full truncate" style={mono}>
+                        <Clock className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                        <span className="truncate">Citation: {currentCard.sourceReference}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Card Bottom Row */}
-                  <div className="pt-4 border-t border-gray-100 flex items-center justify-between gap-3 text-xs">
+                  <div className="pt-3 sm:pt-4 border-t border-gray-100 flex items-center justify-between gap-2 text-xs">
                     {/* View Question Button */}
                     <button
                       type="button"
                       onClick={handleFlip}
-                      className="interactive-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80 border border-transparent hover:border-emerald-200/80 transition shadow-2xs cursor-pointer"
+                      className="interactive-btn inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80 border border-transparent hover:border-emerald-200/80 transition shadow-2xs cursor-pointer text-xs"
                     >
-                      <RotateCw className="w-4 h-4 text-emerald-600" />
+                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
                       <span className="font-mono font-semibold" style={mono}>
                         View Question
                       </span>
                     </button>
 
-                    <div className="flex items-center gap-1.5 font-mono text-gray-400 text-xs" style={mono}>
-                      <span>Click card or Press Space to flip</span>
+                    <div className="flex items-center gap-1.5 font-mono text-gray-400 text-[11px] sm:text-xs text-right" style={mono}>
+                      <span>Tap to flip</span>
                     </div>
                   </div>
                 </div>
@@ -506,28 +506,28 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
       </main>
 
       {/* Bottom Control Bar */}
-      <footer className="w-full flex flex-col items-center gap-4">
-        <div className="w-full flex items-center justify-between gap-4">
+      <footer className="w-full flex flex-col items-center gap-3 sm:gap-4">
+        <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
           {/* Previous Button */}
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentIndex === 0}
-            className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs sm:text-sm rounded-2xl border border-gray-200 shadow-sm hover:shadow active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1 sm:gap-2 px-3.5 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs sm:text-sm rounded-2xl border border-gray-200 shadow-sm hover:shadow active:scale-95 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>Previous</span>
+            <span>Prev</span>
           </button>
 
           {/* Center 3D Flip Action Trigger */}
           <button
             type="button"
             onClick={handleFlip}
-            className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-amber-500 text-amber-600 hover:text-amber-700 hover:border-amber-600 hover:bg-amber-50/50 shadow-md hover:shadow-lg active:scale-90 flex items-center justify-center transition-all duration-200 group cursor-pointer"
+            className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-amber-500 text-amber-600 hover:text-amber-700 hover:border-amber-600 hover:bg-amber-50/50 shadow-md hover:shadow-lg active:scale-90 flex items-center justify-center transition-all duration-200 group cursor-pointer shrink-0"
             title="Flip Card (Spacebar)"
           >
             <RotateCw
-              className={`w-6 h-6 transition-transform duration-500 ${
+              className={`w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-500 ${
                 isFlipped ? 'rotate-180' : 'rotate-0'
               }`}
             />
@@ -537,15 +537,15 @@ export default function FlashcardsView({ data }: FlashcardsViewProps) {
           <button
             type="button"
             onClick={handleNext}
-            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-semibold text-xs sm:text-sm rounded-2xl shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 cursor-pointer"
+            className="inline-flex items-center gap-1 sm:gap-2 px-4 sm:px-7 py-2.5 sm:py-3 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-semibold text-xs sm:text-sm rounded-2xl shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 cursor-pointer shrink-0"
           >
-            <span>{currentIndex === cards.length - 1 ? 'Finish Deck' : 'Next Card'}</span>
+            <span>{currentIndex === cards.length - 1 ? 'Finish' : 'Next'}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
         {/* Keyboard Hotkey Guide */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-gray-400 pt-1" style={mono}>
+        <div className="hidden sm:flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-gray-400 pt-1" style={mono}>
           <span className="inline-flex items-center gap-1">
             <kbd className="px-2 py-0.5 rounded bg-white border border-gray-200 text-gray-700 font-semibold shadow-2xs">
               Space

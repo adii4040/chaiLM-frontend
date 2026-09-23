@@ -167,20 +167,20 @@ export default function AudioOverviewView({
 
       {/* Podcast Audio Player Header Banner */}
       <div
-        className="bg-white rounded-3xl p-6 shadow-sm relative overflow-hidden space-y-5"
+        className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm relative overflow-hidden space-y-4 sm:space-y-5"
         style={{ border: `1.5px solid ${colors.hairlineStrong}` }}
       >
         <div className="h-1.5 w-full bg-rose-600 absolute top-0 left-0 right-0" />
 
         {/* Top Meta & Title */}
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span
               className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold"
               style={mono}
             >
               <Mic className="w-3 h-3 text-rose-600" />
-              <span>2-Host Studio Podcast</span>
+              <span>2-Host Podcast</span>
             </span>
 
             {targetMinutes && (
@@ -189,7 +189,7 @@ export default function AudioOverviewView({
                 style={mono}
               >
                 <Clock className="w-3 h-3" />
-                <span>{targetMinutes} Min Episode</span>
+                <span>{targetMinutes} Min</span>
               </span>
             )}
 
@@ -199,7 +199,7 @@ export default function AudioOverviewView({
                 style={mono}
               >
                 <Radio className="w-3 h-3" />
-                <span className="truncate max-w-[200px]">{podcastFormat}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{podcastFormat}</span>
               </span>
             )}
 
@@ -209,17 +209,17 @@ export default function AudioOverviewView({
                 style={mono}
               >
                 <Sparkles className="w-3 h-3" />
-                <span className="truncate max-w-[200px]">{mood}</span>
+                <span className="truncate max-w-[150px] sm:max-w-[200px]">{mood}</span>
               </span>
             )}
           </div>
 
-          <h2 className="text-base md:text-lg font-bold text-[#14171A] leading-snug">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-[#14171A] leading-snug">
             {data.episodeTitle || 'Podcast Episode'}
           </h2>
 
           {data.summary && (
-            <p className="text-xs text-[#5C6169] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#5C6169] leading-relaxed">
               {data.summary}
             </p>
           )}
@@ -227,17 +227,17 @@ export default function AudioOverviewView({
 
         {/* Audio Synthesis In-Progress Banner */}
         {isAudioProcessing && (
-          <div className="p-4 rounded-2xl bg-rose-50/80 border border-rose-200 flex items-center justify-between gap-3 animate-pulse">
-            <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-rose-50/80 border border-rose-200 flex items-center justify-between gap-3 animate-pulse">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                 <Loader2 className="w-4 h-4 animate-spin" />
               </div>
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-bold text-rose-950">
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs font-bold text-rose-950 truncate">
                   Synthesizing Audio Overview Track...
                 </h4>
-                <p className="text-[11px] text-rose-700 leading-tight">
-                  Generating natural 2-host speech audio via TTS pipeline. Audio controls will activate as soon as synthesis completes.
+                <p className="text-[10px] sm:text-[11px] text-rose-700 leading-tight line-clamp-2">
+                  Generating 2-host audio via TTS pipeline. Controls activate when ready.
                 </p>
               </div>
             </div>
@@ -262,18 +262,18 @@ export default function AudioOverviewView({
 
         {/* Real Audio Player with Live Scrolling Waveform */}
         {isAudioReady && (
-          <div className="p-5 rounded-2xl bg-[#F7F8F6] border border-[#E2E4E1] space-y-4 shadow-2xs">
+          <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#F7F8F6] border border-[#E2E4E1] space-y-3.5 sm:space-y-4 shadow-2xs">
             {/* 1. Live Animated Scrolling Waveform Scrubber */}
             <div className="space-y-1.5">
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-mono font-bold text-[#14171A] shrink-0 min-w-[38px]" style={mono}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#14171A] shrink-0 min-w-[34px] sm:min-w-[38px]" style={mono}>
                   {formatTime(currentTime)}
                 </span>
 
                 {/* Animated Waveform Display */}
-                <div className="flex-1 bg-white rounded-xl border border-[#E2E4E1] p-1.5 px-3 shadow-xs hover:border-[#1F7A5C]/50 transition-colors">
+                <div className="flex-1 bg-white rounded-xl border border-[#E2E4E1] p-1 px-2 sm:p-1.5 sm:px-3 shadow-xs hover:border-[#1F7A5C]/50 transition-colors overflow-hidden">
                   <ScrollingWaveform
-                    height={48}
+                    height={40}
                     barWidth={3}
                     barGap={2.5}
                     speed={28}
@@ -286,21 +286,21 @@ export default function AudioOverviewView({
                   />
                 </div>
 
-                <span className="text-[11px] font-mono text-[#5C6169] shrink-0 min-w-[38px] text-right" style={mono}>
+                <span className="text-[10px] sm:text-[11px] font-mono text-[#5C6169] shrink-0 min-w-[34px] sm:min-w-[38px] text-right" style={mono}>
                   {formatTime(duration)}
                 </span>
               </div>
             </div>
 
             {/* 2. Controls & Volume Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-[#E8EAE6]">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1 border-t border-[#E8EAE6]">
               {/* Left: Playback Action Buttons */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
                 {/* Play / Pause */}
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="px-4 py-2 rounded-full text-white font-semibold text-xs flex items-center space-x-2 transition cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5"
+                  className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-white font-semibold text-xs flex items-center space-x-1.5 sm:space-x-2 transition cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5"
                   style={{ background: colors.verified }}
                 >
                   {isPlaying ? (
@@ -320,7 +320,7 @@ export default function AudioOverviewView({
                 <button
                   type="button"
                   onClick={() => handleSkip(-10)}
-                  className="px-2.5 py-1.5 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] text-[10px] font-mono font-bold flex items-center gap-1 transition cursor-pointer shadow-2xs"
+                  className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] text-[10px] font-mono font-bold flex items-center gap-0.5 sm:gap-1 transition cursor-pointer shadow-2xs"
                   style={mono}
                   title="Rewind 10 seconds"
                 >
@@ -332,7 +332,7 @@ export default function AudioOverviewView({
                 <button
                   type="button"
                   onClick={() => handleSkip(10)}
-                  className="px-2.5 py-1.5 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] text-[10px] font-mono font-bold flex items-center gap-1 transition cursor-pointer shadow-2xs"
+                  className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] text-[10px] font-mono font-bold flex items-center gap-0.5 sm:gap-1 transition cursor-pointer shadow-2xs"
                   style={mono}
                   title="Forward 10 seconds"
                 >
@@ -344,7 +344,7 @@ export default function AudioOverviewView({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="p-2 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] transition cursor-pointer shadow-2xs"
+                  className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-gray-100 border border-[#CBCFC9] text-[#5C6169] hover:text-[#14171A] transition cursor-pointer shadow-2xs"
                   title="Reset Audio to Beginning"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-rose-600" />
@@ -354,7 +354,7 @@ export default function AudioOverviewView({
                 <button
                   type="button"
                   onClick={handleRateCycle}
-                  className="px-2.5 py-1 rounded-full bg-white border border-[#CBCFC9] text-[10px] font-mono font-bold text-[#14171A] hover:bg-gray-100 transition cursor-pointer shadow-2xs"
+                  className="px-2 sm:px-2.5 py-1 rounded-full bg-white border border-[#CBCFC9] text-[10px] font-mono font-bold text-[#14171A] hover:bg-gray-100 transition cursor-pointer shadow-2xs"
                   style={mono}
                   title="Cycle Playback Speed"
                 >
@@ -363,7 +363,7 @@ export default function AudioOverviewView({
               </div>
 
               {/* Right: Sleek Volume Control */}
-              <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-full bg-white border border-[#CBCFC9] shadow-2xs">
+              <div className="flex items-center space-x-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white border border-[#CBCFC9] shadow-2xs">
                 <button
                   type="button"
                   onClick={toggleMute}
@@ -383,7 +383,7 @@ export default function AudioOverviewView({
                   step="0.05"
                   value={isMuted ? 0 : volume}
                   onChange={handleVolumeChange}
-                  className="volume-slider w-16"
+                  className="volume-slider w-12 sm:w-16"
                   style={{
                     background: `linear-gradient(to right, #1F7A5C ${volumePercent}%, #DDE0DC ${volumePercent}%)`,
                   }}
@@ -401,18 +401,18 @@ export default function AudioOverviewView({
         <button
           type="button"
           onClick={() => setIsTranscriptOpen(!isTranscriptOpen)}
-          className="w-full flex items-center justify-between p-4 rounded-2xl bg-white hover:bg-[#FAFBF9] border border-[#CBCFC9] transition-all cursor-pointer shadow-xs group select-none"
+          className="w-full flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white hover:bg-[#FAFBF9] border border-[#CBCFC9] transition-all cursor-pointer shadow-xs group select-none gap-2"
         >
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
             <div className="w-7 h-7 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
               <FileText className="w-3.5 h-3.5" />
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-[#14171A] tracking-wider" style={mono}>
-                PODCAST DIALOGUE TRANSCRIPT
+            <div className="flex items-center space-x-2 min-w-0">
+              <span className="text-xs font-bold text-[#14171A] tracking-wider truncate" style={mono}>
+                PODCAST DIALOGUE
               </span>
               <span
-                className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#F5F6F4] text-[#5C6169] border border-[#E2E4E1]"
+                className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#F5F6F4] text-[#5C6169] border border-[#E2E4E1] shrink-0"
                 style={mono}
               >
                 {dialogue.length} Turns
@@ -420,8 +420,8 @@ export default function AudioOverviewView({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#5C6169] group-hover:text-[#14171A] transition-colors">
-            <span className="text-[11px]">{isTranscriptOpen ? 'Hide Transcript' : 'Show Transcript'}</span>
+          <div className="flex items-center space-x-1.5 text-xs font-semibold text-[#5C6169] group-hover:text-[#14171A] transition-colors shrink-0">
+            <span className="text-[11px] hidden sm:inline">{isTranscriptOpen ? 'Hide Transcript' : 'Show Transcript'}</span>
             <ChevronDown
               className={`w-4 h-4 text-[#5C6169] group-hover:text-[#1F7A5C] transition-transform duration-200 ${
                 isTranscriptOpen ? 'rotate-180 text-[#1F7A5C]' : ''
@@ -443,13 +443,13 @@ export default function AudioOverviewView({
               return (
                 <div
                   key={tIdx}
-                  className={`p-4.5 transition-colors duration-150 space-y-1.5 ${
+                  className={`p-3.5 sm:p-4.5 transition-colors duration-150 space-y-1.5 ${
                     isHost1 ? 'bg-white hover:bg-[#FAFBF9]' : 'bg-[#FAFAFA]/70 hover:bg-[#F5F6F4]'
                   }`}
                 >
                   {/* Turn Header */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
+                    <div className="flex items-center space-x-2">
                       <div
                         className={`w-5 h-5 rounded-full flex items-center justify-center font-mono font-bold text-[10px] shadow-2xs ${
                           isHost1
@@ -476,7 +476,7 @@ export default function AudioOverviewView({
                   </div>
 
                   {/* Spoken Utterance Text */}
-                  <p className="text-xs md:text-sm text-[#2D3139] leading-relaxed pl-7.5 font-sans">
+                  <p className="text-xs sm:text-sm text-[#2D3139] leading-relaxed pl-0 sm:pl-7 font-sans">
                     {turn.text}
                   </p>
                 </div>

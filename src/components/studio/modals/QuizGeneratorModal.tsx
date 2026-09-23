@@ -93,20 +93,20 @@ export function QuizGeneratorModal({
   const activeSource = sources.find((s) => s.sourceId === selectedSourceId);
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="bg-white rounded-[28px] max-w-[560px] w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-6 animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl sm:rounded-[28px] max-w-[560px] w-full p-4 sm:p-8 space-y-4 sm:space-y-6 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] border border-gray-100">
         
         {/* Header */}
         <div className="flex justify-between items-start shrink-0">
-          <div className="flex items-start space-x-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#1F7A5C] flex items-center justify-center shrink-0">
-              <HelpCircle className="w-6 h-6" />
+          <div className="flex items-start space-x-3 sm:space-x-3.5">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-[#1F7A5C] flex items-center justify-center shrink-0">
+              <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+              <h2 className="text-base sm:text-xl font-bold text-gray-900 leading-snug">
                 Generate Assessment Quiz
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 leading-relaxed">
                 Create an interactive test with multiple-choice options, answers, and comprehensive explanations.
               </p>
             </div>
@@ -116,7 +116,7 @@ export function QuizGeneratorModal({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
+            className="text-gray-400 hover:text-gray-700 p-1 sm:p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer disabled:opacity-40 shrink-0"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -124,7 +124,7 @@ export function QuizGeneratorModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-1">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-5 overflow-y-auto pr-1">
           
           {/* Custom Source Dropdown */}
           <SourceDropdown
@@ -143,7 +143,7 @@ export function QuizGeneratorModal({
               </span>
             </div>
 
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               {QUESTION_COUNT_OPTIONS.map((count) => {
                 const isSelected = questionCount === count;
                 return (
@@ -151,7 +151,7 @@ export function QuizGeneratorModal({
                     key={count}
                     type="button"
                     onClick={() => setQuestionCount(count)}
-                    className={`py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center justify-center ${
+                    className={`py-2 sm:py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center justify-center ${
                       isSelected
                         ? 'bg-emerald-50 border-emerald-400 text-emerald-900 shadow-xs ring-1 ring-emerald-200'
                         : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50/60'
@@ -170,7 +170,7 @@ export function QuizGeneratorModal({
               Difficulty level
             </label>
 
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
               {DIFFICULTY_OPTIONS.map((opt) => {
                 const isSelected = difficulty === opt.value;
                 return (
@@ -178,7 +178,7 @@ export function QuizGeneratorModal({
                     key={opt.value}
                     type="button"
                     onClick={() => setDifficulty(opt.value)}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border text-left transition-all cursor-pointer ${
                       isSelected
                         ? 'border-2 border-[#1F7A5C] bg-white shadow-xs'
                         : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
@@ -191,7 +191,7 @@ export function QuizGeneratorModal({
                     >
                       {opt.label}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 block leading-tight">
+                    <span className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 block leading-tight truncate sm:whitespace-normal">
                       {opt.desc}
                     </span>
                   </button>
@@ -250,12 +250,12 @@ export function QuizGeneratorModal({
           )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 shrink-0">
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-100 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer disabled:opacity-40"
             >
               Cancel
             </button>
@@ -263,7 +263,7 @@ export function QuizGeneratorModal({
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2.5 bg-[#1F7A5C] hover:bg-[#18634B] active:bg-[#13503C] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
+              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#1F7A5C] hover:bg-[#18634B] active:bg-[#13503C] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
                 <>

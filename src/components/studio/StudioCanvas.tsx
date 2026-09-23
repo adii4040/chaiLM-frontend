@@ -123,7 +123,7 @@ export default function StudioCanvas({
 
   return (
     <main
-      className="flex-1 flex flex-col h-full overflow-y-auto p-6 md:p-8 space-y-6 max-w-5xl mx-auto w-full"
+      className="flex-1 flex flex-col h-full overflow-y-auto p-3.5 sm:p-6 md:p-8 space-y-4 sm:space-y-6 max-w-5xl mx-auto w-full"
       style={{ background: colors.paper }}
     >
       {/* Feature Header Banner */}

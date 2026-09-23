@@ -41,7 +41,7 @@ export function ArtifactCard({
     <div
       onClick={() => onSelect(artifact)}
       onMouseMove={spotlightMove}
-      className="p-6 rounded-3xl bg-white border border-[#CBCFC9] hover:border-[#1F7A5C] transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 group shadow-sm hover:shadow-xl hover:-translate-y-1 relative overflow-hidden spotlight-card"
+      className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#CBCFC9] hover:border-[#1F7A5C] transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-3.5 sm:space-y-4 group shadow-sm hover:shadow-xl hover:-translate-y-1 relative overflow-hidden spotlight-card"
     >
       {/* Top sliding indicator line on hover */}
       <div
@@ -49,7 +49,7 @@ export function ArtifactCard({
         style={{ background: featureMeta.accentBorder }}
       />
 
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center space-x-2 text-[10px] font-mono" style={mono}>
             {sourceType === 'youtube' ? (
@@ -72,7 +72,7 @@ export function ArtifactCard({
             type="button"
             disabled={isDeleting}
             onClick={(e) => onDelete(artId, e)}
-            className="p-1.5 text-[#93968F] hover:text-red-600 rounded-lg hover:bg-red-50 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+            className="p-1.5 text-[#93968F] hover:text-red-600 rounded-lg hover:bg-red-50 transition opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
             title="Delete Artifact"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -80,7 +80,7 @@ export function ArtifactCard({
         </div>
 
         <div className="space-y-1">
-          <h3 className="text-base font-bold text-[#14171A] group-hover:text-[#1F7A5C] transition-colors leading-snug">
+          <h3 className="text-sm sm:text-base font-bold text-[#14171A] group-hover:text-[#1F7A5C] transition-colors leading-snug">
             {artifact.title}
           </h3>
           {artifact.metadata?.sourceTitle && (
@@ -91,11 +91,11 @@ export function ArtifactCard({
         </div>
       </div>
 
-      <div className="pt-3.5 border-t flex items-center justify-between" style={{ borderColor: colors.hairline }}>
-        <div>
+      <div className="pt-3 border-t flex items-center justify-between gap-2 flex-wrap" style={{ borderColor: colors.hairline }}>
+        <div className="min-w-0">
           {artifact.type === 'quiz' && (
             <span
-              className="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-2xs font-mono"
+              className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-2xs font-mono"
               style={{
                 ...mono,
                 background: colors.verifiedSoft,
@@ -109,7 +109,7 @@ export function ArtifactCard({
           )}
           {artifact.type === 'flashcards' && (
             <span
-              className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
+              className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
               style={mono}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -118,7 +118,7 @@ export function ArtifactCard({
           )}
           {artifact.type === 'study_guide' && (
             <span
-              className="px-3 py-1 rounded-full bg-blue-100 border border-blue-300 text-blue-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
+              className="px-2.5 sm:px-3 py-1 rounded-full bg-blue-100 border border-blue-300 text-blue-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
               style={mono}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -127,7 +127,7 @@ export function ArtifactCard({
           )}
           {artifact.type === 'mindmap' && (
             <span
-              className="px-3 py-1 rounded-full bg-purple-100 border border-purple-300 text-purple-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
+              className="px-2.5 sm:px-3 py-1 rounded-full bg-purple-100 border border-purple-300 text-purple-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
               style={mono}
             >
               <Network className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export function ArtifactCard({
           {artifact.type === 'audio_overview' && (
             <div className="flex items-center gap-1.5 flex-wrap">
               <span
-                className="px-3 py-1 rounded-full bg-rose-100 border border-rose-300 text-rose-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
+                className="px-2.5 sm:px-3 py-1 rounded-full bg-rose-100 border border-rose-300 text-rose-800 font-mono text-xs font-bold flex items-center gap-1.5 shadow-2xs"
                 style={mono}
               >
                 <Mic className="w-3.5 h-3.5" />
@@ -145,15 +145,15 @@ export function ArtifactCard({
               </span>
               {artifact.audioStatus === 'processing' && (
                 <span
-                  className="px-2.5 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800 font-mono text-[10px] font-bold animate-pulse"
+                  className="px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800 font-mono text-[9px] sm:text-[10px] font-bold animate-pulse"
                   style={mono}
                 >
-                  Synthesizing Audio...
+                  Synthesizing...
                 </span>
               )}
               {artifact.audioStatus === 'ready' && artifact.audioUrl && (
                 <span
-                  className="px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono text-[10px] font-bold"
+                  className="px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono text-[9px] sm:text-[10px] font-bold"
                   style={mono}
                 >
                   Audio Ready
@@ -169,7 +169,7 @@ export function ArtifactCard({
             e.stopPropagation();
             onSelect(artifact);
           }}
-          className="py-1.5 px-3.5 rounded-full text-white text-xs font-semibold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5"
+          className="py-1.5 px-3 sm:px-3.5 rounded-full text-white text-xs font-semibold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5 shrink-0 ml-auto"
           style={{ background: colors.verified }}
         >
           <span>Open</span>

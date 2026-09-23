@@ -7,7 +7,7 @@ import { SectionEyebrow } from "./SharedAtoms";
 const FAQ_ITEMS = [
   {
     q: "How does ChaiLM prevent AI hallucinations?",
-    a: "ChaiLM uses a multi-stage retrieval pipeline — HyDE query translation, Reciprocal Rank Fusion across parallel search variants, and Cohere cross-encoder reranking. The LLM is strictly constrained via Zod schemas to only answer from verified source passages.",
+    a: "ChaiLM uses a multi-stage retrieval pipeline: HyDE query translation, Reciprocal Rank Fusion across parallel search variants, and Cohere cross-encoder reranking. The LLM is strictly constrained via Zod schemas to only answer from verified source passages.",
   },
   {
     q: "Can I use YouTube videos in Hindi or Hinglish?",

@@ -15,7 +15,7 @@ const HOW_IT_WORKS = [
     n: "01",
     icon: FileText,
     title: "Upload any content",
-    desc: "Drop in a PDF research paper, paste a YouTube lecture URL, or insert a web article — all into one isolated workspace.",
+    desc: "Drop in a PDF research paper, paste a YouTube lecture URL, or insert a web article, all inside one isolated workspace.",
     tag: "PDFs · YouTube · Web",
   },
   {

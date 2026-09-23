@@ -4,7 +4,7 @@ import { colors, serif, mono, EASE } from "./tokens";
 import { SectionEyebrow } from "./SharedAtoms";
 
 const COMPARISON_ROWS = [
-  { label: "Direct YouTube timestamp seek", chailm: { state: "yes", text: "Native — jumps to cited second" }, other: { state: "partial", text: "Transcript-grounded citations" } },
+  { label: "Direct YouTube timestamp seek", chailm: { state: "yes", text: "Native (jumps to cited second)" }, other: { state: "partial", text: "Transcript-grounded citations" } },
   { label: "Hinglish / phonetic retrieval", chailm: { state: "yes", text: "Dedicated phonetic-to-Devanagari mapping" }, other: { state: "partial", text: "80+ languages; no phonetic mapping" } },
   { label: "PDF + YouTube + Web, unified workspace", chailm: { state: "yes", text: "Unified" }, other: { state: "yes", text: "Supported" } },
   { label: "Flashcards, quizzes & mind maps", chailm: { state: "yes", text: "Built-in Studio" }, other: { state: "yes", text: "Built-in Studio" } },
@@ -55,7 +55,7 @@ export function ComparisonMatrix({ reducedMotion }: { reducedMotion: boolean }) 
             Compared to Gemini Notebook.
           </h2>
           <p style={{ color: colors.slate }}>
-            Gemini Notebook is a strong product — this is where ChaiLM's RAG implementation differs with precise deep-linking and multi-angle retrieval.
+            Gemini Notebook is a strong product, but ChaiLM's RAG implementation differs with precise deep-linking and multi-angle retrieval.
           </p>
         </div>
 
