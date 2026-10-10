@@ -96,12 +96,12 @@ export function LandingNav({ reducedMotion }: { reducedMotion: boolean }) {
             <>
               {/* Go to Workspaces Button */}
               <Link
-                to="/workspaces"
+                to="/workspace"
                 className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold text-white shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
                 style={{ background: colors.verified }}
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">Workspaces</span>
+                <span>Workspaces</span>
               </Link>
 
               {/* User Profile & Logout Container matching DashboardHeader */}
@@ -199,7 +199,7 @@ export function LandingNav({ reducedMotion }: { reducedMotion: boolean }) {
             <div className="pt-3 border-t border-[#E2E4E1] flex items-center justify-between gap-3">
               {user ? (
                 <Link
-                  to="/workspaces"
+                  to="/workspace"
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-white shadow-sm"
                   style={{ background: colors.verified }}

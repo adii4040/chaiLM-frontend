@@ -2,6 +2,10 @@ export interface User {
   _id: string;
   fullname: string;
   email: string;
+  plan?: string;
+  subscriptionStatus?: string;
+  planExpiresAt?: string;
+  subscription?: string;
   createdAt?: string;
   updatedAt?: string;
 }

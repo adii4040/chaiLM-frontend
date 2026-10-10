@@ -14,4 +14,12 @@ export class AuthRoutes {
   public static get LOGOUT_USER() {
     return '/api/user/logout';
   }
+
+  public static get UPDATE_PROFILE() {
+    return '/api/user/profile';
+  }
+
+  public static get CHANGE_PASSWORD() {
+    return '/api/user/change-password';
+  }
 }

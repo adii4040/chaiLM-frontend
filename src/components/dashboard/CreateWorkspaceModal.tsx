@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FolderPlus, X, ArrowRight, Loader2 } from 'lucide-react';
 import { colors, serif, mono } from '../landing/tokens';
 
@@ -16,6 +16,17 @@ export default function CreateWorkspaceModal({
   isSubmitting = false,
 }: CreateWorkspaceModalProps) {
   const [newTitle, setNewTitle] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import WorkspacePage from './pages/WorkspacePage';
 import WorkspaceDashboardPage from './pages/WorkspaceDashboardPage';
+import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/workspace/:workspaceId/studio/:featureType" element={<WorkspacePage />} />
           <Route path="/workspace/:workspaceId/studio/:featureType/:artifactId" element={<WorkspacePage />} />
           <Route path="/workspace/session/:sessionId" element={<WorkspacePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
         {/* Fallback */}
